@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
 Uploaders: Tollef Fog Heen <tfheen@debian.org>, Thom May <thom@debian.org>, Fabio M. Di Nitto <fabbione@fabbione.net>, Daniel Stone <daniels@debian.org>, Adam Conrad <adconrad@0c3.net>
-Build-Depends: debhelper (>> 5.0.0), autoconf, autotools-dev, dpatch, libtool, mawk
+Build-Depends: debhelper (>> 5.0.0), autoconf, autotools-dev, dpatch, libtool, mawk, uuid-dev
 Standards-Version: 3.6.1.0
 
 Package: libapr1

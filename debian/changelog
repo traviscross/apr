@@ -1,0 +1,25 @@
+apr1.0 (1.2.2-2) unstable; urgency=low
+
+  * Up to debhelper v5
+  * Add call to dh_installdocs; not sure why I was not doing this already.
+
+ -- Thom May <thom@debian.org>  Tue,  3 Jan 2006 13:01:56 +0000
+
+apr1.0 (1.2.2-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Thom May <thom@debian.org>  Thu, 29 Dec 2005 17:05:42 +0000
+
+apr1.0 (1.1.1-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Thom May <thom@debian.org>  Sun,  8 May 2005 17:12:09 +0100
+
+apr1.0 (1.1.0-1) unstable; urgency=low
+
+  * New Upstream Release
+  * First Package Release
+
+ -- Thom May <thom@debian.org>  Wed, 17 Nov 2004 11:51:32 -0800

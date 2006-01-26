@@ -1,6 +1,7 @@
 apr1.0 (1.2.2-3) unstable; urgency=low
 
   * Rename binary packages to libapr1 etc.
+  * Add conflicts for old packages.
 
  -- Tollef Fog Heen <tfheen@debian.org>  Thu, 26 Jan 2006 12:42:30 +0100
 

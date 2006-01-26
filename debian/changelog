@@ -1,3 +1,9 @@
+apr1.0 (1.2.2-3) unstable; urgency=low
+
+  * Rename binary packages to libapr1 etc.
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Thu, 26 Jan 2006 12:42:30 +0100
+
 apr1.0 (1.2.2-2) unstable; urgency=low
 
   * Up to debhelper v5

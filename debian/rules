@@ -36,7 +36,7 @@ SHELL=/bin/bash
 
 config.status: configure
 	dh_testdir
-	CFLAGS="$(CFLAGS)" $(CONFFLAGS) ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0
+	CFLAGS="$(CFLAGS)" $(CONFFLAGS) ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --enable-nonportable-atomics
 
 build: patch-stamp build-stamp
 

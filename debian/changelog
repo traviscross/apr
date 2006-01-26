@@ -1,8 +1,12 @@
 apr1.0 (1.2.2-3) unstable; urgency=low
 
+  (Tollef Fog Heen)
   * Rename binary packages to libapr1 etc.
   * Add conflicts for old packages.
   * libapr1-dev Depends: uuid-dev.
+  
+  (Thom May)
+  * Enable non-portable atomics.
 
  -- Tollef Fog Heen <tfheen@debian.org>  Thu, 26 Jan 2006 12:42:30 +0100
 

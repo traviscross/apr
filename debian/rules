@@ -32,11 +32,18 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
 
+ifeq (,$(findstring notest,$(DEB_BUILD_OPTIONS)))
+	TEST_TARGET = test
+else
+	TEST_TARGET =
+endif
+
 SHELL=/bin/bash
+LIBTOOL=/usr/bin/libtool
 
 config.status: configure
 	dh_testdir
-	CFLAGS="$(CFLAGS)" $(CONFFLAGS) ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --enable-nonportable-atomics
+	CFLAGS="$(CFLAGS)" $(CONFFLAGS) ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
 
 build: patch-stamp build-stamp
 
@@ -52,7 +59,7 @@ clean: unpatch
 	dh_testroot
 	rm -f build-stamp test-stamp
 	-$(MAKE) distclean
-	
+
 	dh_clean
 
 test: test-stamp
@@ -61,14 +68,16 @@ test-stamp: build
 	dh_testdir
 	$(MAKE) check
 	touch $@
-	
-install: build test
+
+install: build $(TEST_TARGET)
 	dh_testdir
 	dh_testroot
 	dh_clean -k
 	dh_installdirs -a
 
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	rm -f libtool
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp LIBTOOL=$(LIBTOOL)
+
 
 binary-indep: build install
 

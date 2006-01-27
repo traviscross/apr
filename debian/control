@@ -1,4 +1,4 @@
-Source: apr1.0
+Source: apr
 Section: libs
 Priority: optional
 Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>

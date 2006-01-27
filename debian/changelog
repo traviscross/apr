@@ -1,5 +1,6 @@
-apr1.0 (1.2.2-3) unstable; urgency=low
+apr (1.2.2-3) unstable; urgency=low
 
+  * Rename source package to match upstream.
   * Rename binary packages to libapr1 etc.
   * Add conflicts for old packages.
   * libapr1-dev Depends: uuid-dev.

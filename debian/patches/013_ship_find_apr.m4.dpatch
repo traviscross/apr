@@ -2,13 +2,13 @@
 ## 013_ship_find_apr.m4.dpatch by Tollef Fog Heen <tfheen@err.no>
 ##
 ## All lines beginning with `## DP:' are a description of the patch.
-## DP: Install find_apr.m4 too
+## DP: Install a set of random build files too
 
 @DPATCH@
 diff -urNad apr1.0-1.2.2~/Makefile.in apr1.0-1.2.2/Makefile.in
 --- apr1.0-1.2.2~/Makefile.in	2005-02-04 12:55:44.000000000 +0100
 +++ apr1.0-1.2.2/Makefile.in	2006-01-26 20:19:44.000000000 +0100
-@@ -85,6 +85,13 @@
+@@ -85,6 +85,15 @@
  	done
  	$(INSTALL_DATA) build/apr_rules.out $(DESTDIR)$(installbuilddir)/apr_rules.mk
  	$(INSTALL) -m 755 apr-config.out $(DESTDIR)$(bindir)/$(APR_CONFIG)
@@ -16,8 +16,10 @@ diff -urNad apr1.0-1.2.2~/Makefile.in apr1.0-1.2.2/Makefile.in
 +	if [ ! -d $(DESTDIR)$(installbuilddir) ]; then \
 +	    $(top_srcdir)/build/mkdir.sh $(DESTDIR)$(installbuilddir); \
 +	fi
-+	$(LIBTOOL) --mode=install cp $(top_srcdir)/build/find_apr.m4 \
-+	    $(DESTDIR)$(installbuilddir)/find_apr.m4	
++	for file in find_apr.m4 apr_common.m4 install.sh gen-build.py; do \
++		$(LIBTOOL) --mode=install cp $(top_srcdir)/build/$$file \
++	    $(DESTDIR)$(installbuilddir)/$$file	; \
++	done
 +
  	@if [ $(INSTALL_SUBDIRS) != "none" ]; then \
              for i in $(INSTALL_SUBDIRS); do \

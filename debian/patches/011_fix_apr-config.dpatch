@@ -6,14 +6,14 @@
 
 @DPATCH@
 diff -urNad apr1.0-1.2.2~/apr-config.in apr1.0-1.2.2/apr-config.in
---- apr1.0-1.2.2~/apr-config.in	2006-01-26 20:14:50.000000000 +0100
-+++ apr1.0-1.2.2/apr-config.in	2006-01-26 20:16:02.000000000 +0100
+--- apr1.0-1.2.2~/apr-config.in	2006-01-27 13:57:24.000000000 +0100
++++ apr1.0-1.2.2/apr-config.in	2006-01-27 13:58:42.000000000 +0100
 @@ -38,7 +38,7 @@
  LIBS="@EXTRA_LIBS@"
  EXTRA_INCLUDES="@EXTRA_INCLUDES@"
  SHLIBPATH_VAR="@shlibpath_var@"
 -APR_SOURCE_DIR="@apr_srcdir@"
-+APR_SOURCE_DIR="@installbuilddir@"
++APR_SOURCE_DIR="$(cd @installbuilddir@/.. ; pwd)"
  APR_BUILD_DIR="@apr_builddir@"
  APR_SO_EXT="@so_ext@"
  APR_LIB_TARGET="@export_lib_target@"

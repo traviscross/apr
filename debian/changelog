@@ -6,6 +6,7 @@ apr (1.2.2-3) unstable; urgency=low
   * libapr1-dev Depends: uuid-dev.
   * Add uuid-dev to Build-Dep:
   * Enable non-portable atomics.
+  * Update Standards-Version: no changes.
 
  -- Tollef Fog Heen <tfheen@debian.org>  Thu, 26 Jan 2006 12:42:30 +0100
 

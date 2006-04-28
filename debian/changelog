@@ -1,6 +1,8 @@
 apr (1.2.7-1) unstable; urgency=low
 
   * New upstream release.
+  * Add apr-1-config man page.  Closes: #357174, thanks to Vincent Danjean
+    for the conversion job.
 
  -- Tollef Fog Heen <tfheen@debian.org>  Fri, 28 Apr 2006 19:45:08 +0000
 

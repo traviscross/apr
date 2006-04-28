@@ -1,3 +1,9 @@
+apr (1.2.7-2) unstable; urgency=low
+
+  * Ship get-version.sh too, needed by apr-util.
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Fri, 28 Apr 2006 22:57:43 +0200
+
 apr (1.2.7-1) unstable; urgency=low
 
   * New upstream release.

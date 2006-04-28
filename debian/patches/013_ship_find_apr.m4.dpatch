@@ -16,7 +16,7 @@ diff -urNad apr1.0-1.2.2~/Makefile.in apr1.0-1.2.2/Makefile.in
 +	if [ ! -d $(DESTDIR)$(installbuilddir) ]; then \
 +	    $(top_srcdir)/build/mkdir.sh $(DESTDIR)$(installbuilddir); \
 +	fi
-+	for file in find_apr.m4 apr_common.m4 install.sh gen-build.py; do \
++	for file in find_apr.m4 apr_common.m4 install.sh gen-build.py get-version.sh ; do \
 +		$(LIBTOOL) --mode=install cp $(top_srcdir)/build/$$file \
 +	    $(DESTDIR)$(installbuilddir)/$$file	; \
 +	done

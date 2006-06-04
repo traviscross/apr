@@ -1,6 +1,8 @@
 apr (1.2.7-3) UNRELEASED; urgency=low
 
   * Fix override disparity
+  * Backport of patch to work around kernel problems with sendfile on 64bit
+    platforms
 
  -- Tollef Fog Heen <tfheen@debian.org>  Mon,  1 May 2006 17:06:37 +0200
 

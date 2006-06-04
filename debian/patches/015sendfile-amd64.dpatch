@@ -1,0 +1,26 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 015sendfile-amd64.dpatch by  <thom@debian.org>
+## Ensure that we only send 2GB chunks on 64bit platforms thanks
+## to extreme linux kernel bustage.
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad apr-1.2.2~/network_io/unix/sendrecv.c apr-1.2.2/network_io/unix/sendrecv.c
+--- apr-1.2.2~/network_io/unix/sendrecv.c	2005-06-12 18:54:25.000000000 +0100
++++ apr-1.2.2/network_io/unix/sendrecv.c	2006-06-04 17:14:04.000000000 +0100
+@@ -264,6 +264,14 @@
+ 
+ #else
+     off_t off = *offset;
++
++    /* Multiple reports have shown sendfile failing with EINVAL if
++     * passed a >=2Gb count value on some 64-bit kernels.  It won't
++     * noticably hurt performance to limit each call to <2Gb at a
++     * time, so avoid that issue here: */
++    if (sizeof(off_t) == 8 && *len > INT_MAX) {
++        *len = INT_MAX;
++    }
+ #endif
+ 
+     if (!hdtr) {

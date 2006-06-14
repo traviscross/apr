@@ -39,7 +39,6 @@ else
 endif
 
 SHELL=/bin/bash
-LIBTOOL=/usr/bin/libtool
 
 config.status: configure
 	dh_testdir
@@ -75,9 +74,7 @@ install: build $(TEST_TARGET)
 	dh_clean -k
 	dh_installdirs -a
 
-	rm -f libtool
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp LIBTOOL=$(LIBTOOL)
-
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 
 binary-indep: build install
 

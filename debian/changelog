@@ -5,6 +5,8 @@ apr (1.2.7-3) UNRELEASED; urgency=low
     platforms
   * Update config.{guess,sub} to make libtool happier.  This fixes the
     problem reported in #369881.  Closes: #369881.
+  * Remove some of the libtool hacks since they're no longer needed with
+    the newer config.{guess,sub}
 
  -- Tollef Fog Heen <tfheen@debian.org>  Mon,  1 May 2006 17:06:37 +0200
 

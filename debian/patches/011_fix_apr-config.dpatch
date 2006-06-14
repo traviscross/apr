@@ -17,12 +17,3 @@ diff -urNad apr1.0-1.2.2~/apr-config.in apr1.0-1.2.2/apr-config.in
  APR_BUILD_DIR="@apr_builddir@"
  APR_SO_EXT="@so_ext@"
  APR_LIB_TARGET="@export_lib_target@"
-@@ -223,7 +223,7 @@
-     ;;
-     --apr-libtool)
-     if test "$location" = "installed"; then
--        echo "${installbuilddir}/libtool"
-+        echo "/usr/bin/libtool"
-     else
-         echo "$APR_BUILD_DIR/libtool"
-     fi

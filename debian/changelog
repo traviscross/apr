@@ -1,4 +1,4 @@
-apr (1.2.7-3) UNRELEASED; urgency=low
+apr (1.2.7-3) unstable; urgency=low
 
   * Fix override disparity
   * Backport of patch to work around kernel problems with sendfile on 64bit

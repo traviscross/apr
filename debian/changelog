@@ -1,6 +1,7 @@
 apr (1.2.7-5) unstable; urgency=low
 
   * Add doxygen to build-deps.
+  * Add sendfile hurd patch.  Closes: #349416
 
  -- Tollef Fog Heen <tfheen@debian.org>  Wed, 27 Sep 2006 19:32:10 +0200
 

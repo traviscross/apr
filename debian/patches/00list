@@ -2,4 +2,5 @@
 013_ship_find_apr.m4
 014_fix-apr.pc
 015sendfile-amd64
+016_sendfile_hurd
 099_config_guess_sub_update

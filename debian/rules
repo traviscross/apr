@@ -42,14 +42,15 @@ SHELL=/bin/bash
 
 config.status: configure
 	dh_testdir
-	CFLAGS="$(CFLAGS)" $(CONFFLAGS) ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
+	mkdir -p build-$(DEB_HOST_GNU_TYPE)
+	cd build-$(DEB_HOST_GNU_TYPE) && CFLAGS="$(CFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
 
 build: patch-stamp build-stamp
 
 build-stamp: config.status
 	dh_testdir
 
-	$(MAKE)
+	cd build-$(DEB_HOST_GNU_TYPE) && $(MAKE)
 
 	touch $@
 
@@ -57,6 +58,7 @@ clean: unpatch
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp test-stamp
+	rm -rf build-$(DEB_HOST_GNU_TYPE)
 	-$(MAKE) distclean
 
 	dh_clean
@@ -65,7 +67,7 @@ test: test-stamp
 
 test-stamp: build
 	dh_testdir
-	$(MAKE) check
+	cd build-$(DEB_HOST_GNU_TYPE) && $(MAKE) check
 	touch $@
 
 install: build $(TEST_TARGET)
@@ -74,7 +76,7 @@ install: build $(TEST_TARGET)
 	dh_clean -k
 	dh_installdirs -a
 
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	cd build-$(DEB_HOST_GNU_TYPE) && $(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 
 binary-indep: build install
 

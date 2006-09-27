@@ -1,3 +1,9 @@
+apr (1.2.7-5) unstable; urgency=low
+
+  * Add doxygen to build-deps.
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Wed, 27 Sep 2006 19:32:10 +0200
+
 apr (1.2.7-4) unstable; urgency=low
 
   * No longer force apr_lock_method.  Closes: #384117

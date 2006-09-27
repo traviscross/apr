@@ -1,3 +1,9 @@
+apr (1.2.7-4) unstable; urgency=low
+
+  * No longer force apr_lock_method.  Closes: #384117
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Wed, 27 Sep 2006 17:26:56 +0200
+
 apr (1.2.7-3) unstable; urgency=low
 
   * Fix override disparity

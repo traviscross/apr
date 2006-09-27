@@ -1,3 +1,11 @@
+apr (1.2.7-6) unstable; urgency=low
+
+  * Update 011_fix_apr-config to give out the libtool used to build apr
+    with.  Fixes Apache 2.2 FTBFS when we remove all the evil libtool
+    hacks there too.
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Wed, 27 Sep 2006 22:16:51 +0200
+
 apr (1.2.7-5) unstable; urgency=low
 
   * Add doxygen to build-deps.

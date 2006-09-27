@@ -5,9 +5,9 @@
 ## DP: No description.
 
 @DPATCH@
-diff -urNad apr1.0-1.2.2~/apr-config.in apr1.0-1.2.2/apr-config.in
---- apr1.0-1.2.2~/apr-config.in	2006-01-27 13:57:24.000000000 +0100
-+++ apr1.0-1.2.2/apr-config.in	2006-01-27 13:58:42.000000000 +0100
+diff -urNad apr-1.2.7~/apr-config.in apr-1.2.7/apr-config.in
+--- apr-1.2.7~/apr-config.in	2006-09-27 21:53:28.000000000 +0200
++++ apr-1.2.7/apr-config.in	2006-09-27 21:56:24.000000000 +0200
 @@ -38,7 +38,7 @@
  LIBS="@EXTRA_LIBS@"
  EXTRA_INCLUDES="@EXTRA_INCLUDES@"
@@ -17,3 +17,16 @@ diff -urNad apr1.0-1.2.2~/apr-config.in apr1.0-1.2.2/apr-config.in
  APR_BUILD_DIR="@apr_builddir@"
  APR_SO_EXT="@so_ext@"
  APR_LIB_TARGET="@export_lib_target@"
+@@ -222,11 +222,7 @@
+     exit 0
+     ;;
+     --apr-libtool)
+-    if test "$location" = "installed"; then
+-        echo "/usr/bin/libtool"
+-    else
+-        echo "$APR_BUILD_DIR/libtool"
+-    fi
++        echo "$installbuilddir/libtool"
+     exit 0
+     ;;
+     --help)

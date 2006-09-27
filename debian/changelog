@@ -2,6 +2,7 @@ apr (1.2.7-4) unstable; urgency=low
 
   * No longer force apr_lock_method.  Closes: #384117
   * Use srcdir != builddir.
+  * Add docs to -dev package.  Closes: #388146
 
  -- Tollef Fog Heen <tfheen@debian.org>  Wed, 27 Sep 2006 17:26:56 +0200
 

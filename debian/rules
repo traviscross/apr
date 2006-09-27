@@ -42,7 +42,7 @@ SHELL=/bin/bash
 
 config.status: configure
 	dh_testdir
-	mkdir -p build-$(DEB_HOST_GNU_TYPE)
+	mkdir -p build-$(DEB_HOST_GNU_TYPE) build-$(DEB_HOST_GNU_TYPE)/docs
 	cd build-$(DEB_HOST_GNU_TYPE) && CFLAGS="$(CFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
 
 build: patch-stamp build-stamp
@@ -51,6 +51,7 @@ build-stamp: config.status
 	dh_testdir
 
 	cd build-$(DEB_HOST_GNU_TYPE) && $(MAKE)
+	cd build-$(DEB_HOST_GNU_TYPE) && $(MAKE) dox
 
 	touch $@
 

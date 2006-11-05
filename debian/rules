@@ -21,6 +21,9 @@ CFLAGS := $(CFLAGS) -pipe -Wall -g
 
 CONFFLAGS += ac_cv_prog_AWK=mawk
 
+# these are specifically for 2.4 compat
+CONFFLAGS += apr_cv_epoll=no apr_cv_tcp_nodelay_with_cork=no
+
 # Enable debug builds
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 CFLAGS += -O0

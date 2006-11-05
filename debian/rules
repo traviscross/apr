@@ -13,7 +13,7 @@ DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 CFLAGS := $(CFLAGS) -pipe -Wall -g
 
-ifneq ($(DEB_BUILD_ARCH),i386)
+ifneq ($(DEB_BUILD_ARCH),amd64)
 # these are specifically for 2.4 compat
 CONFFLAGS += apr_cv_epoll=no apr_cv_tcp_nodelay_with_cork=no
 endif

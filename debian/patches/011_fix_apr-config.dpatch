@@ -5,9 +5,9 @@
 ## DP: No description.
 
 @DPATCH@
-diff -urNad apr-1.2.7~/apr-config.in apr-1.2.7/apr-config.in
---- apr-1.2.7~/apr-config.in	2006-09-27 21:53:28.000000000 +0200
-+++ apr-1.2.7/apr-config.in	2006-09-27 21:56:24.000000000 +0200
+Index: apr-config.in
+--- a/apr-config.in
++++ b/apr-config.in
 @@ -38,7 +38,7 @@
  LIBS="@EXTRA_LIBS@"
  EXTRA_INCLUDES="@EXTRA_INCLUDES@"
@@ -22,7 +22,7 @@ diff -urNad apr-1.2.7~/apr-config.in apr-1.2.7/apr-config.in
      ;;
      --apr-libtool)
 -    if test "$location" = "installed"; then
--        echo "/usr/bin/libtool"
+-        echo "${installbuilddir}/libtool"
 -    else
 -        echo "$APR_BUILD_DIR/libtool"
 -    fi

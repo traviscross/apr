@@ -41,6 +41,12 @@ SHELL=/bin/bash
 
 config.status: configure
 	dh_testdir
+	# Determine whether it's safe to replace ino_t with unsigned long
+	rm -f debian/ino_t_test
+	gcc -o debian/ino_t_test debian/ino_t_test.c
+	debian/ino_t_test
+	rm -f debian/ino_t_test
+
 	mkdir -p build-$(DEB_HOST_GNU_TYPE) build-$(DEB_HOST_GNU_TYPE)/docs
 	cd build-$(DEB_HOST_GNU_TYPE) && CFLAGS="$(CFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
 
@@ -57,7 +63,7 @@ build-stamp: config.status
 clean: unpatch
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp test-stamp
+	rm -f build-stamp test-stamp debian/ino_t_test
 	rm -rf build-$(DEB_HOST_GNU_TYPE)
 	-$(MAKE) distclean
 

@@ -1,3 +1,11 @@
+apr (1.2.7-8) UNRELEASED; urgency=low
+
+  [ Peter Samuelson ]
+  * Small kludge^Wtweak to apr_file_info.h to make the ABI stable across
+    LFS/non-LFS preprocessor flags.  (See: #397402)
+
+ -- Peter Samuelson <peter@p12n.org>  Sun, 12 Nov 2006 06:33:21 -0600
+
 apr (1.2.7-7) unstable; urgency=low
 
   * Update rules to ensure we don't turn on features that aren't available on

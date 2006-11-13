@@ -12,14 +12,18 @@
 Index: include/apr_file_info.h
 --- a/include/apr_file_info.h
 +++ b/include/apr_file_info.h
-@@ -134,7 +134,9 @@
+@@ -134,7 +134,13 @@
  typedef apr_uint32_t              apr_dev_t;
  #else
  /** The inode of the file. */
 -typedef ino_t                     apr_ino_t;
 +/* NOTE: this should be ino_t, except that in that case the ABI changes
 + * if you compile an app with LFS defines. */
++#ifdef __alpha__
++typedef unsigned int              apr_ino_t;
++#else
 +typedef unsigned long int         apr_ino_t;
++#endif
  /**
   * Structure for determining the device the file is on.
   */

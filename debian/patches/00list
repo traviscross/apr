@@ -1,7 +1,7 @@
 011_fix_apr-config
 013_ship_find_apr.m4
 014_fix-apr.pc
-015sendfile-amd64
+015_sendfile_lfs
 016_sendfile_hurd
 020_lfs_ino_t
 099_config_guess_sub_update

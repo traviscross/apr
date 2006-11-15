@@ -1,3 +1,13 @@
+apr (1.2.7-9) UNRELEASED; urgency=low
+
+  [ Peter Samuelson ]
+  * patches/015sendfile-amd64:
+    - Rename to 015_sendfile_lfs
+    - Refactor apr_socket_sendfile a little, to make it possible to:
+    - Add logic to detect sendfile64() at runtime (Closes: #396631)
+
+ -- Peter Samuelson <peter@p12n.org>  Wed, 15 Nov 2006 05:58:38 -0600
+
 apr (1.2.7-8) unstable; urgency=low
 
   [ Peter Samuelson ]

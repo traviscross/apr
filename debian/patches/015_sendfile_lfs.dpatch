@@ -10,7 +10,7 @@
 Index: network_io/unix/sendrecv.c
 --- a/network_io/unix/sendrecv.c
 +++ b/network_io/unix/sendrecv.c
-@@ -240,31 +240,74 @@
+@@ -240,31 +240,77 @@
  
  #if defined(__linux__) && defined(HAVE_WRITEV)
  
@@ -59,13 +59,16 @@ Index: network_io/unix/sendrecv.c
 +            ret = sendfile64(out, in, off, len);
 +        while (ret == -1 && errno == EINTR);
 +
-+        if (ret == -1 && errno == ENOSYS) {
-+            sendfile64_enosys = 1;
-+            errno = EINVAL;
-+        }
-+        return ret;
++        if (ret != -1 || errno != ENOSYS)
++            return ret;
++
++        sendfile64_enosys = 1;
 +    }
 +#endif
++    if (*off > INT_MAX) {
++        errno = EINVAL;
++        return -1;
++    }
 +    offtmp = *off;
 +    do
 +	ret = sendfile(out, in, &offtmp, len);
@@ -103,7 +106,7 @@ Index: network_io/unix/sendrecv.c
  
      if (!hdtr) {
          hdtr = &no_hdtr;
-@@ -310,12 +353,10 @@
+@@ -310,12 +356,10 @@
          goto do_select;
      }
  
@@ -117,7 +120,7 @@ Index: network_io/unix/sendrecv.c
  
      while ((rv == -1) && (errno == EAGAIN || errno == EWOULDBLOCK) 
                        && (sock->timeout > 0)) {
-@@ -326,12 +367,10 @@
+@@ -326,12 +370,10 @@
              return arv;
          }
          else {

@@ -2,7 +2,7 @@
 #include <sys/types.h>
 
 /* keep this in sync with the patch to apr_file_info.h */
-#ifdef __alpha__
+#if defined(__alpha__) || defined(__FreeBSD_kernel__)
 typedef unsigned int              apr_ino_t;
 #else
 typedef unsigned long int         apr_ino_t;

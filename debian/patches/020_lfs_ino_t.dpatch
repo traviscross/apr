@@ -19,7 +19,7 @@ Index: include/apr_file_info.h
 -typedef ino_t                     apr_ino_t;
 +/* NOTE: this should be ino_t, except that in that case the ABI changes
 + * if you compile an app with LFS defines. */
-+#ifdef __alpha__
++#if defined(__alpha__) || defined(__FreeBSD_kernel__)
 +typedef unsigned int              apr_ino_t;
 +#else
 +typedef unsigned long int         apr_ino_t;

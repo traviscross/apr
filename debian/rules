@@ -11,6 +11,8 @@ include /usr/share/dpatch/dpatch.make
 DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
+BUILDDIR := build-$(DEB_HOST_GNU_TYPE)
+
 CFLAGS := $(CFLAGS) -pipe -Wall -g
 
 ifneq ($(DEB_BUILD_ARCH),amd64)
@@ -47,16 +49,16 @@ config.status: configure
 	debian/ino_t_test
 	rm -f debian/ino_t_test
 
-	mkdir -p build-$(DEB_HOST_GNU_TYPE) build-$(DEB_HOST_GNU_TYPE)/docs
-	cd build-$(DEB_HOST_GNU_TYPE) && CFLAGS="$(CFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
+	mkdir -p $(BUILDDIR)/docs
+	cd $(BUILDDIR) && CFLAGS="$(CFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
 
 build: patch-stamp build-stamp
 
 build-stamp: config.status
 	dh_testdir
 
-	cd build-$(DEB_HOST_GNU_TYPE) && $(MAKE)
-	cd build-$(DEB_HOST_GNU_TYPE) && $(MAKE) dox
+	$(MAKE) -C $(BUILDDIR)
+	$(MAKE) -C $(BUILDDIR) dox
 
 	touch $@
 
@@ -64,8 +66,7 @@ clean: unpatch
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp test-stamp debian/ino_t_test
-	rm -rf build-$(DEB_HOST_GNU_TYPE)
-	-$(MAKE) distclean
+	rm -rf $(BUILDDIR)
 
 	dh_clean
 
@@ -73,7 +74,7 @@ test: test-stamp
 
 test-stamp: build
 	dh_testdir
-	cd build-$(DEB_HOST_GNU_TYPE) && $(MAKE) check
+	$(MAKE) -C $(BUILDDIR) check
 	touch $@
 
 install: build $(TEST_TARGET)
@@ -82,7 +83,7 @@ install: build $(TEST_TARGET)
 	dh_clean -k
 	dh_installdirs -a
 
-	cd build-$(DEB_HOST_GNU_TYPE) && $(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	$(MAKE) -C $(BUILDDIR) install DESTDIR=$(CURDIR)/debian/tmp
 
 binary-indep: build install
 

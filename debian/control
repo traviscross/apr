@@ -18,7 +18,7 @@ Description: The Apache Portable Runtime Library
 Package: libapr1-dev
 Architecture: any
 Section: libdevel
-Depends: libapr1 (= ${Source-Version}), uuid-dev
+Depends: libapr1 (= ${binary:Version}), uuid-dev
 Conflicts: libapr1.0-dev, libapr0-dev
 Description: The Apache Portable Runtime Library - Development Headers
  APR is Apache's Portable Runtime Library, designed to be a support library 
@@ -31,7 +31,7 @@ Package: libapr1-dbg
 Architecture: any
 Section: libdevel
 Priority: extra
-Depends: libapr1 (= ${Source-Version})
+Depends: libapr1 (= ${binary:Version})
 Description: The Apache Portable Runtime Library - Development Headers
  APR is Apache's Portable Runtime Library, designed to be a support library 
  that provides a predictable and consistent interface to underlying 

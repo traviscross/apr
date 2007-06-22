@@ -1,12 +1,15 @@
-apr (1.2.7-9) UNRELEASED; urgency=low
+apr (1.2.9-1) UNRELEASED; urgency=low
 
   * Acknowledge NMUs - thanks, Andi.
 
   [ Peter Samuelson ]
+  * New upstream version.
+    - Update 015_sendfile_lfs.dpatch
+    - Remove obsolete 099_config_guess_sub_update.dpatch
   * 020_lfs_ino_t.dpatch: update to support kfreebsd-amd64.
     Thanks to Petr Salinger.  (Closes: #405564)
 
- -- Peter Samuelson <peter@p12n.org>  Wed, 15 Nov 2006 05:58:38 -0600
+ -- Peter Samuelson <peter@p12n.org>  Fri, 22 Jun 2007 14:03:20 -0500
 
 apr (1.2.7-8.2) unstable; urgency=high
 

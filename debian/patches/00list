@@ -4,4 +4,3 @@
 015_sendfile_lfs
 016_sendfile_hurd
 020_lfs_ino_t
-099_config_guess_sub_update

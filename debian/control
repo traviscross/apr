@@ -19,6 +19,7 @@ Package: libapr1-dev
 Architecture: any
 Section: libdevel
 Depends: libapr1 (= ${binary:Version}), uuid-dev
+Suggests: python
 Conflicts: libapr1.0-dev, libapr0-dev
 Description: The Apache Portable Runtime Library - Development Headers
  APR is Apache's Portable Runtime Library, designed to be a support library 

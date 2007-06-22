@@ -8,6 +8,7 @@ apr (1.2.9-1) UNRELEASED; urgency=low
     - Remove obsolete 099_config_guess_sub_update.dpatch
   * 020_lfs_ino_t.dpatch: update to support kfreebsd-amd64.
     Thanks to Petr Salinger.  (Closes: #405564)
+  * Add myself to Uploaders.
 
  -- Peter Samuelson <peter@p12n.org>  Fri, 22 Jun 2007 14:03:20 -0500
 

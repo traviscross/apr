@@ -3,6 +3,8 @@ apr (1.2.11-1) UNRELEASED; urgency=low
   * New upstream version (Closes: #441969)
   * Enable epoll. This means we don't support Linux 2.4 kernels anymore
     (Closes: #441635)
+  * Fix generation of docs (Closes: #413684)
+  * Don't ship LaTeX source files in .deb
   * Build with -D_REENTRANT on kfreebsd (Closes: #301417)
   * Fix FTBFS on hurd because of missing PATH_MAX (Closes: #349418)
   * Add myself to Uploaders

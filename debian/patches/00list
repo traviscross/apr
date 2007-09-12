@@ -6,3 +6,4 @@
 020_lfs_ino_t
 021_kbsd_gnu.dpatch
 022_hurd_path_max.dpatch
+023_fix_doxygen.dpatch

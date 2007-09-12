@@ -1,3 +1,9 @@
+apr (1.2.11-1) UNRELEASED; urgency=low
+
+  * New upstream version (Closes: #441969)
+
+ -- Stefan Fritsch <sf@debian.org>  Wed, 12 Sep 2007 21:12:12 +0200
+
 apr (1.2.9-1) UNRELEASED; urgency=low
 
   * Acknowledge NMUs - thanks, Andi.

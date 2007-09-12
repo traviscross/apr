@@ -2,6 +2,7 @@ apr (1.2.11-1) UNRELEASED; urgency=low
 
   * New upstream version (Closes: #441969)
   * Build with -D_REENTRANT on kfreebsd (Closes: #301417)
+  * Fix FTBFS on hurd because of missing PATH_MAX (Closes: #349418)
 
  -- Stefan Fritsch <sf@debian.org>  Wed, 12 Sep 2007 21:12:12 +0200
 

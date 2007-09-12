@@ -4,3 +4,4 @@
 015_sendfile_lfs
 016_sendfile_hurd
 020_lfs_ino_t
+021_kbsd_gnu.dpatch

@@ -5,4 +5,3 @@ debian/tmp/usr/lib/pkgconfig
 debian/tmp/usr/bin
 debian/tmp/usr/share/apr-1.0/
 build-*/docs/dox/html usr/share/doc/libapr1-dev
-build-*/docs/dox/apr.tag usr/share/doc/libapr1-dev

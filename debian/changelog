@@ -7,6 +7,8 @@ apr (1.2.11-1) UNRELEASED; urgency=low
   * Don't ship LaTeX source files in .deb
   * Build with -D_REENTRANT on kfreebsd (Closes: #301417)
   * Fix FTBFS on hurd because of missing PATH_MAX (Closes: #349418)
+  * Do not build everything twice by using the correct path to config.status
+    in debian/rules
   * Add myself to Uploaders
 
  -- Stefan Fritsch <sf@debian.org>  Wed, 12 Sep 2007 21:12:12 +0200

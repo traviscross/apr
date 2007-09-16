@@ -24,6 +24,12 @@ else
 CFLAGS += -O2
 endif
 
+# avoid having to recreate configure at build time by setting
+# -D_REENTRANT manually on kfreebsd
+ifneq (,$(findstring bsd,$(DEB_HOST_GNU_TYPE)))
+	CPPFLAGS += -D_REENTRANT
+endif
+
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
@@ -45,7 +51,7 @@ config.status: configure
 	rm -f debian/ino_t_test
 
 	mkdir -p $(BUILDDIR)/docs
-	cd $(BUILDDIR) && CFLAGS="$(CFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
+	cd $(BUILDDIR) && CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
 
 build: patch-stamp build-stamp
 

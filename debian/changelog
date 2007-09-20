@@ -1,4 +1,4 @@
-apr (1.2.11-1) UNRELEASED; urgency=low
+apr (1.2.11-1) unstable; urgency=low
 
   * New upstream version (Closes: #441969)
   * Enable epoll (Closes: #441635). This means we don't support Linux 2.4
@@ -14,7 +14,7 @@ apr (1.2.11-1) UNRELEASED; urgency=low
 
  -- Stefan Fritsch <sf@debian.org>  Thu, 20 Sep 2007 20:56:37 +0200
 
-apr (1.2.9-1) UNRELEASED; urgency=low
+apr (1.2.9-1) unstable; urgency=low
 
   * Acknowledge NMUs - thanks, Andi.
 

@@ -10,8 +10,9 @@ apr (1.2.11-1) UNRELEASED; urgency=low
   * Do not build everything twice by using the correct path to config.status
     in debian/rules
   * Add myself to Uploaders
+  * Add svn repository information to debian/control
 
- -- Stefan Fritsch <sf@debian.org>  Wed, 12 Sep 2007 21:12:12 +0200
+ -- Stefan Fritsch <sf@debian.org>  Thu, 20 Sep 2007 20:56:37 +0200
 
 apr (1.2.9-1) UNRELEASED; urgency=low
 

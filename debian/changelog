@@ -1,3 +1,12 @@
+apr (1.2.12-1) UNRELEASED; urgency=low
+
+  * New upstream version.
+    - Remove 020_lfs_ino_t.dpatch now done by upstream configure. Adjust
+      ino_t_test.c to check that this is the same definition of apr_ino_t as
+      we had before.
+
+ -- Stefan Fritsch <sf@debian.org>  Fri, 01 Feb 2008 21:01:24 +0100
+
 apr (1.2.11-1) unstable; urgency=low
 
   * New upstream version (Closes: #441969)

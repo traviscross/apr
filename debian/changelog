@@ -6,6 +6,8 @@ apr (1.2.12-1) UNRELEASED; urgency=low
       we had before.
   * Remove Thom May, Fabio M. Di Nitto, Daniel Stone, and Adam Conrad from the
     uploaders field (thanks for your work).
+  * Point VCS tags in debian control to trunk, to make them useful with
+    debcheckout.
 
  -- Stefan Fritsch <sf@debian.org>  Fri, 01 Feb 2008 21:01:24 +0100
 

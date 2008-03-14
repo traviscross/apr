@@ -6,6 +6,10 @@ apr (1.2.12-1) UNRELEASED; urgency=low
       we had before.
   * Remove Thom May, Fabio M. Di Nitto, Daniel Stone, and Adam Conrad from the
     uploaders field (thanks for your work).
+  * Fix some lintian warnings:
+    - Bump Standards-Version to 3.7.3 (no changes).
+    - Remove obsolete XS- from VCS tags.
+    - Remove empty /usr/share/doc/libapr1.0 directory.
   * Point VCS tags in debian control to trunk, to make them useful with
     debcheckout.
 

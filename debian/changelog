@@ -6,6 +6,8 @@ apr (1.2.12-1) UNRELEASED; urgency=low
       we had before.
   * Enable hardening options: -fstack-protector -Wformat-security
     -D_FORTIFY_SOURCE=2 -Wl,-z,relro
+  * Disable SCTP for now, in order to get a consistent build result in unclean
+    build environments.
   * Remove Thom May, Fabio M. Di Nitto, Daniel Stone, and Adam Conrad from the
     uploaders field (thanks for your work).
   * Fix some lintian warnings:

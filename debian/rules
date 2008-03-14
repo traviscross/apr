@@ -20,7 +20,7 @@ CFLAGS := $(CFLAGS) -fstack-protector -Wformat-security
 CPPFLAGS := $(CPPFLAGS) -D_FORTIFY_SOURCE=2
 LDFLAGS := $(LDFLAGS) -Wl,-z,relro
 
-CONFFLAGS += ac_cv_prog_AWK=mawk
+CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no
 
 # Enable debug builds
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))

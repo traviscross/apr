@@ -2,7 +2,7 @@ Source: apr
 Section: libs
 Priority: optional
 Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
-Uploaders: Tollef Fog Heen <tfheen@debian.org>, Thom May <thom@debian.org>, Fabio M. Di Nitto <fabbione@fabbione.net>, Daniel Stone <daniels@debian.org>, Adam Conrad <adconrad@0c3.net>, Peter Samuelson <peter@p12n.org>, Stefan Fritsch <sf@debian.org>
+Uploaders: Tollef Fog Heen <tfheen@debian.org>, Peter Samuelson <peter@p12n.org>, Stefan Fritsch <sf@debian.org>
 Build-Depends: debhelper (>> 5.0.0), autoconf, autotools-dev, dpatch, libtool, mawk, uuid-dev, doxygen
 Standards-Version: 3.7.2
 XS-Vcs-Browser: http://svn.debian.org/wsvn/pkg-apache

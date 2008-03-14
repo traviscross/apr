@@ -2,7 +2,7 @@
 ## 023_fix_doxygen.dpatch by Stefan Fritsch <sf@debian.org>
 ##
 ## All lines beginning with `## DP:' are a description of the patch.
-## DP: No description.
+## DP: Fix generation of docs for out-of-tree builds and newer doxygen versions
 
 @DPATCH@
 diff -urNad apr-1.2.11~/docs/doxygen.conf apr-1.2.11/docs/doxygen.conf

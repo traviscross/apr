@@ -10,6 +10,7 @@ apr (1.2.12-1) UNRELEASED; urgency=low
     - Bump Standards-Version to 3.7.3 (no changes).
     - Remove obsolete XS- from VCS tags.
     - Remove empty /usr/share/doc/libapr1.0 directory.
+    - Provide patch description.
   * Point VCS tags in debian control to trunk, to make them useful with
     debcheckout.
 

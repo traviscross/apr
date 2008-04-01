@@ -1,4 +1,4 @@
-apr (1.2.12-1) UNRELEASED; urgency=low
+apr (1.2.12-1) unstable; urgency=low
 
   * New upstream version.
     - Remove 020_lfs_ino_t.dpatch now done by upstream configure. Adjust
@@ -18,7 +18,7 @@ apr (1.2.12-1) UNRELEASED; urgency=low
   * Point VCS tags in debian control to trunk, to make them useful with
     debcheckout.
 
- -- Stefan Fritsch <sf@debian.org>  Fri, 01 Feb 2008 21:01:24 +0100
+ -- Stefan Fritsch <sf@debian.org>  Tue, 01 Apr 2008 22:17:47 +0200
 
 apr (1.2.11-1) unstable; urgency=low
 

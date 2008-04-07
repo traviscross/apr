@@ -1,3 +1,9 @@
+apr (1.2.12-2) UNRELEASED; urgency=low
+
+  * Remove unneded libtool build dependency.
+
+ -- Stefan Fritsch <sf@debian.org>  Mon, 07 Apr 2008 23:15:45 +0200
+
 apr (1.2.12-1) unstable; urgency=low
 
   * New upstream version.

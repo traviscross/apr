@@ -1,5 +1,8 @@
-apr (1.2.12-2) UNRELEASED; urgency=low
+apr (1.2.12-2) UNRELEASED; urgency=high
 
+  * Urgency high for RC bug fix.
+  * Do not use -fstack-protector on arm and armel, since it is completely
+    broken (see #469517). Closes: #477772
   * Remove unneded libtool build dependency.
 
  -- Stefan Fritsch <sf@debian.org>  Mon, 07 Apr 2008 23:15:45 +0200

@@ -1,3 +1,10 @@
+apr (1.2.12-3) UNRELEASED; urgency=low
+
+  * Enable hardening options in a way that does not include them in
+    apr-config, which was a bad idea.
+
+ -- Stefan Fritsch <sf@debian.org>  Wed, 11 Jun 2008 18:28:46 +0200
+
 apr (1.2.12-2) unstable; urgency=high
 
   * Urgency high for RC bug fix.

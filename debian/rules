@@ -16,12 +16,11 @@ BUILDDIR := build-$(DEB_HOST_GNU_TYPE)
 CFLAGS := $(CFLAGS) -pipe -Wall -g
 
 # hardening options
-CFLAGS := $(CFLAGS) -Wformat-security
-CPPFLAGS := $(CPPFLAGS) -D_FORTIFY_SOURCE=2
-LDFLAGS := $(LDFLAGS) -Wl,-z,relro
+H_CFLAGS := -Wformat-security -D_FORTIFY_SOURCE=2
+H_LDFLAGS := -Wl,-z,relro
 # do not enable -fstack-protector on arm and armel, see #477772, #469517
 ifeq (,$(findstring arm,$(DEB_HOST_GNU_TYPE)))
-	CFLAGS += -fstack-protector
+	H_CFLAGS += -fstack-protector
 endif
 
 CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no
@@ -66,7 +65,7 @@ build: patch-stamp build-stamp
 build-stamp: $(BUILDDIR)/config.status
 	dh_testdir
 
-	$(MAKE) -C $(BUILDDIR)
+	$(MAKE) -C $(BUILDDIR) CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
 	$(MAKE) -C $(BUILDDIR) dox
 
 	touch $@
@@ -83,7 +82,7 @@ test: test-stamp
 
 test-stamp: build
 	dh_testdir
-	$(MAKE) -C $(BUILDDIR) check
+	$(MAKE) -C $(BUILDDIR) check CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
 	touch $@
 
 install: build $(TEST_TARGET)

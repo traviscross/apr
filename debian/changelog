@@ -1,8 +1,9 @@
 apr (1.2.12-4) UNRELEASED; urgency=low
 
+  * Use /dev/urandom instead of /dev/random (like 1.3.* does).
   * Update watch file to recognize 1.3.*.
 
- -- Stefan Fritsch <sf@debian.org>  Wed, 11 Jun 2008 21:28:56 +0200
+ -- Stefan Fritsch <sf@debian.org>  Sun, 15 Jun 2008 17:09:12 +0200
 
 apr (1.2.12-3) unstable; urgency=low
 

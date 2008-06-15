@@ -5,3 +5,4 @@
 016_sendfile_hurd
 022_hurd_path_max.dpatch
 023_fix_doxygen.dpatch
+024_use_dev_urandom.dpatch

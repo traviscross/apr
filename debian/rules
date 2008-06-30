@@ -47,10 +47,6 @@ ifneq (,$(findstring bsd,$(DEB_HOST_GNU_TYPE)))
 	CPPFLAGS += -D_REENTRANT
 endif
 
-ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-	INSTALL_PROGRAM += -s
-endif
-
 ifeq (,$(findstring notest,$(DEB_BUILD_OPTIONS)))
 	TEST_TARGET = test
 else

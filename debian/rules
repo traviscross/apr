@@ -15,8 +15,6 @@ BUILDDIR := build-$(DEB_HOST_GNU_TYPE)
 
 CFLAGS := $(CFLAGS) -pipe -Wall -g
 
-MAKEFLAGS += -C $(BUILDDIR)
-
 # hardening options
 H_CFLAGS := -Wformat-security -D_FORTIFY_SOURCE=2
 H_LDFLAGS := -Wl,-z,relro
@@ -61,7 +59,7 @@ endif
 
 SHELL=/bin/bash
 
-$(BUILDDIR)/config.status: configure
+$(BUILDDIR)/config.status: configure patch-stamp
 	dh_testdir
 	mkdir -p $(BUILDDIR)/docs
 	cd $(BUILDDIR) && CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
@@ -76,8 +74,8 @@ build: patch-stamp build-stamp
 build-stamp: $(BUILDDIR)/config.status
 	dh_testdir
 
-	$(MAKE) $(MAKEFLAGS) CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
-	$(MAKE) $(MAKEFLAGS) dox
+	$(MAKE) -C $(BUILDDIR) CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
+	$(MAKE) -C $(BUILDDIR) dox
 
 	touch $@
 
@@ -93,7 +91,7 @@ test: test-stamp
 
 test-stamp: build
 	dh_testdir
-	$(MAKE) $(MAKEFLAGS) check CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
+	$(MAKE) -C $(BUILDDIR) check CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
 	touch $@
 
 install: build $(TEST_TARGET)
@@ -102,7 +100,7 @@ install: build $(TEST_TARGET)
 	dh_clean -k
 	dh_installdirs -a
 
-	$(MAKE) $(MAKEFLAGS) install DESTDIR=$(CURDIR)/debian/tmp
+	$(MAKE) -C $(BUILDDIR) install DESTDIR=$(CURDIR)/debian/tmp
 
 binary-indep: build install
 

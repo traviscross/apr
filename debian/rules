@@ -86,7 +86,10 @@ test: test-stamp
 
 test-stamp: build
 	dh_testdir
-	$(MAKE) -C $(BUILDDIR) check CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
+	$(MAKE) -C $(BUILDDIR)/test all CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
+	cd $(BUILDDIR)/test && ./testall -v -x testsock testsockets
+	cd $(BUILDDIR)/test && ./testall -v testsock testsockets || true
+	/sbin/ifconfig |sed 's/[0-9]/1/g' || true
 	touch $@
 
 install: build $(TEST_TARGET)

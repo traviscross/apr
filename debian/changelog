@@ -1,9 +1,13 @@
-apr (1.3.2-1) UNRELEASED; urgency=low
+apr (1.3.2-1) experimental; urgency=low
 
+  [ Ryan Niebur ]
   * new upstream version
   * use symbol files
 
- -- Ryan Niebur <RyanRyan52@gmail.com>  Mon, 07 Jul 2008 17:59:46 -0700
+  [ Stefan Fritsch ]
+  * Upload to experimental
+
+ -- Stefan Fritsch <sf@debian.org>  Wed, 23 Jul 2008 20:49:02 +0200
 
 apr (1.2.12-5) unstable; urgency=low
 

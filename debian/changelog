@@ -1,3 +1,10 @@
+apr (1.3.2-3) UNRELEASED; urgency=low
+
+  * Add netbase to build-deps to fix testsock test.
+  * Ignore testsockets test only on vservers and if IPv6 is not configured.
+
+ -- Stefan Fritsch <sf@debian.org>  Wed, 30 Jul 2008 20:12:41 +0200
+
 apr (1.3.2-2) experimental; urgency=low
 
   * Make tests more verbose to make debugging FTBFS easier.

@@ -36,12 +36,6 @@ else
   endif
 endif
 
-# avoid having to recreate configure at build time by setting
-# -D_REENTRANT manually on kfreebsd
-ifneq (,$(findstring bsd,$(DEB_HOST_GNU_TYPE)))
-	CPPFLAGS += -D_REENTRANT
-endif
-
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
@@ -54,9 +48,10 @@ endif
 
 SHELL=/bin/bash
 
-$(BUILDDIR)/config.status: configure
+$(BUILDDIR)/config.status:
 	dh_testdir
 	mkdir -p $(BUILDDIR)/docs
+	./buildconf
 	cd $(BUILDDIR) && CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
 	# Determine whether upstream's configure gives the same definition of apr_ino_t as we had until 1.2.11-1
 	rm -f debian/ino_t_test
@@ -78,6 +73,7 @@ clean: unpatch
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp test-stamp debian/ino_t_test
+	rm -f configure build/ltmain.sh build/libtool.m4 build-outputs.mk include/arch/unix/apr_private.h.in
 	rm -rf $(BUILDDIR)
 
 	dh_clean

@@ -2,6 +2,9 @@ apr (1.3.2-3) UNRELEASED; urgency=low
 
   * Add netbase to build-deps to fix testsock test.
   * Ignore testsockets test only on vservers and if IPv6 is not configured.
+  * Rerun buildconf during package build. This fixes FTBFS on powerpc (because
+    of broken autoconf used by upstream, see #490820).
+  * Remove kfreebsd hack no longer necessary with 1.3.x.
 
  -- Stefan Fritsch <sf@debian.org>  Wed, 30 Jul 2008 20:12:41 +0200
 

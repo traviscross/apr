@@ -245,6 +245,8 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_pool_create_core_ex_debug@Base 1.3.2
  apr_pool_create_ex@Base 1.2.7
  apr_pool_create_ex_debug@Base 1.2.7
+ apr_pool_create_unmanaged_ex@Base 1.3.3-1
+ apr_pool_create_unmanaged_ex_debug@Base 1.3.3-1
  apr_pool_destroy@Base 1.2.7
  apr_pool_destroy_debug@Base 1.2.7
  apr_pool_initialize@Base 1.2.7

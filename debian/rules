@@ -82,7 +82,7 @@ test: test-stamp
 
 # the testsockets test will fail on vservers (no 127.0.0.1) or if ipv6 is
 # enabled in the kernel but not configured on any interface
-IGNORE_TESTSOCKETS = $(shell IGN=false; \
+IGNORE_TESTSOCK = $(shell IGN=false; \
 	/sbin/ifconfig|grep -q 127.0.0.1 || IGN=true; \
 	grep -q ipv6 /proc/net/protocols && ( /sbin/ifconfig|grep -q inet6 || IGN=true ) ; \
 	echo $$IGN )
@@ -90,8 +90,10 @@ IGNORE_TESTSOCKETS = $(shell IGN=false; \
 test-stamp: build
 	dh_testdir
 	$(MAKE) -C $(BUILDDIR)/test all CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
-	cd $(BUILDDIR)/test && ./testall -v -x testsockets
-	cd $(BUILDDIR)/test && ./testall -v testsockets || $(IGNORE_TESTSOCKETS)
+	ls -al $(BUILDDIR)/test/data || true
+	id || true
+	cd $(BUILDDIR)/test && ./testall -v testsockets testsock || $(IGNORE_TESTSOCK)
+	cd $(BUILDDIR)/test && ./testall -v -x testsockets testsock
 	touch $@
 
 install: build $(TEST_TARGET)

@@ -36,8 +36,9 @@ else
   endif
 endif
 
-ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-	INSTALL_PROGRAM += -s
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+  NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+  MAKEFLAGS += -j$(NUMJOBS)
 endif
 
 ifeq (,$(findstring notest,$(DEB_BUILD_OPTIONS)))
@@ -48,7 +49,7 @@ endif
 
 SHELL=/bin/bash
 
-$(BUILDDIR)/config.status:
+$(BUILDDIR)/config.status: patch-stamp
 	dh_testdir
 	mkdir -p $(BUILDDIR)/docs
 	./buildconf

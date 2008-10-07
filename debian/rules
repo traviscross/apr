@@ -27,24 +27,19 @@ CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no
 
 # Enable debug builds
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-  CFLAGS += -O0
+CFLAGS += -O0
 else
-  ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-    CFLAGS += -O0
-  else
-    CFLAGS += -O2
-  endif
-endif
-
-ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
-  NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
-  MAKEFLAGS += -j$(NUMJOBS)
+CFLAGS += -O2
 endif
 
 # avoid having to recreate configure at build time by setting
 # -D_REENTRANT manually on kfreebsd
 ifneq (,$(findstring bsd,$(DEB_HOST_GNU_TYPE)))
 	CPPFLAGS += -D_REENTRANT
+endif
+
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
 endif
 
 ifeq (,$(findstring notest,$(DEB_BUILD_OPTIONS)))
@@ -55,7 +50,7 @@ endif
 
 SHELL=/bin/bash
 
-$(BUILDDIR)/config.status: configure patch-stamp
+$(BUILDDIR)/config.status: configure
 	dh_testdir
 	mkdir -p $(BUILDDIR)/docs
 	cd $(BUILDDIR) && CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics

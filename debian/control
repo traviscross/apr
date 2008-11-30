@@ -2,7 +2,7 @@ Source: apr
 Section: libs
 Priority: optional
 Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
-Uploaders: Tollef Fog Heen <tfheen@debian.org>, Peter Samuelson <peter@p12n.org>, Stefan Fritsch <sf@debian.org>
+Uploaders: Tollef Fog Heen <tfheen@debian.org>, Peter Samuelson <peter@p12n.org>, Stefan Fritsch <sf@debian.org>, Ryan Niebur <ryanryan52@gmail.com>
 Build-Depends: debhelper (>> 5.0.0), autoconf, autotools-dev, dpatch, mawk, uuid-dev, doxygen, netbase, net-tools, libtool, python
 Standards-Version: 3.8.0
 Vcs-Browser: http://svn.debian.org/wsvn/pkg-apache/trunk/apr

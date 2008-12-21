@@ -36,7 +36,7 @@ Architecture: any
 Section: libdevel
 Priority: extra
 Depends: libapr1 (= ${binary:Version})
-Description: The Apache Portable Runtime Library - Development Headers
+Description: The Apache Portable Runtime Library - Debugging Symbols
  APR is Apache's Portable Runtime Library, designed to be a support library 
  that provides a predictable and consistent interface to underlying 
  platform-specific implementations. 

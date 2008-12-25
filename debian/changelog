@@ -1,3 +1,10 @@
+apr (1.2.12-6) UNRELEASED; urgency=low
+
+  * Fix short description for libapr1-dbg to say debugging symbols, not
+    development headers.  Closes: #508144
+
+ -- Tollef Fog Heen <tfheen@debian.org>  Thu, 25 Dec 2008 10:24:39 +0100
+
 apr (1.2.12-5) unstable; urgency=low
 
   * Actually switch to /dev/urandom instead of only adding a non-functional

@@ -16,7 +16,7 @@ BUILDDIR := build-$(DEB_HOST_GNU_TYPE)
 CFLAGS := $(CFLAGS) -pipe -Wall -g
 
 # hardening options
-H_CFLAGS := -Wformat-security -D_FORTIFY_SOURCE=2
+H_CFLAGS := -Wformat -Wformat-security -D_FORTIFY_SOURCE=2
 H_LDFLAGS := -Wl,-z,relro
 # do not enable -fstack-protector on arm and armel, see #477772, #469517
 ifeq (,$(findstring arm,$(DEB_HOST_GNU_TYPE)))
@@ -27,19 +27,18 @@ CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no
 
 # Enable debug builds
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-CFLAGS += -O0
+  CFLAGS += -O0
 else
-CFLAGS += -O2
+  ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+    CFLAGS += -O0
+  else
+    CFLAGS += -O2
+  endif
 endif
 
-# avoid having to recreate configure at build time by setting
-# -D_REENTRANT manually on kfreebsd
-ifneq (,$(findstring bsd,$(DEB_HOST_GNU_TYPE)))
-	CPPFLAGS += -D_REENTRANT
-endif
-
-ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-	INSTALL_PROGRAM += -s
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+  NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+  MAKEFLAGS += -j$(NUMJOBS)
 endif
 
 ifeq (,$(findstring notest,$(DEB_BUILD_OPTIONS)))
@@ -50,10 +49,11 @@ endif
 
 SHELL=/bin/bash
 
-$(BUILDDIR)/config.status: configure
+$(BUILDDIR)/config.status: patch-stamp
 	dh_testdir
 	mkdir -p $(BUILDDIR)/docs
-	cd $(BUILDDIR) && CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics --with-devrandom=/dev/urandom
+	./buildconf
+	cd $(BUILDDIR) && CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" $(CONFFLAGS) ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics
 	# Determine whether upstream's configure gives the same definition of apr_ino_t as we had until 1.2.11-1
 	rm -f debian/ino_t_test
 	gcc -I$(CURDIR)/include -I$(BUILDDIR)/include `$(BUILDDIR)/apr-1-config --cppflags` -o debian/ino_t_test debian/ino_t_test.c
@@ -74,15 +74,27 @@ clean: unpatch
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp test-stamp debian/ino_t_test
+	rm -f configure build/ltmain.sh build/libtool.m4 build-outputs.mk include/arch/unix/apr_private.h.in
 	rm -rf $(BUILDDIR)
 
 	dh_clean
 
 test: test-stamp
 
+# the testsockets test will fail on vservers (no 127.0.0.1) or if ipv6 is
+# enabled in the kernel but not configured on any interface
+IGNORE_TESTSOCK = $(shell IGN=false; \
+	/sbin/ifconfig|grep -q 127.0.0.1 || IGN=true; \
+	grep -q ipv6 /proc/net/protocols && ( /sbin/ifconfig|grep -q inet6 || IGN=true ) ; \
+	echo $$IGN )
+
 test-stamp: build
 	dh_testdir
-	$(MAKE) -C $(BUILDDIR) check CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
+	$(MAKE) -C $(BUILDDIR)/test all CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
+	ls -al $(BUILDDIR)/test/data || true
+	id || true
+	cd $(BUILDDIR)/test && ./testall -v testsockets testsock || $(IGNORE_TESTSOCK)
+	cd $(BUILDDIR)/test && ./testall -v -x testsockets testsock
 	touch $@
 
 install: build $(TEST_TARGET)

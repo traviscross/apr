@@ -1,16 +1,66 @@
+apr (1.3.3-2) UNRELEASED; urgency=low
+
+  [ Ryan Niebur ]
+  * added support for parallel in DEB_BUILD_OPTIONS
+  * add me to Uploaders
+
+  [ Stefan Fritsch ]
+  * Correct description for libapr1-dbg (closes: #508144).
+
+ -- Ryan Niebur <ryanryan52@gmail.com>  Sat, 29 Nov 2008 17:05:49 -0800
+
+apr (1.3.3-1) experimental; urgency=low
+
+  * New upstream release.
+  * Not only ignore testsockets but also testsock to fix some more build
+    failures.
+  * Add some debugging output for m68k test problems (#495400).
+  * Add -Wformat to CFLAGS to actually make use of -Wformat-security.
+
+ -- Stefan Fritsch <sf@debian.org>  Fri, 26 Sep 2008 19:52:14 +0200
+
+apr (1.3.2-3) experimental; urgency=low
+
+  * Add netbase to build-deps to fix testsock test.
+  * Ignore testsockets test only on vservers and if IPv6 is not configured.
+  * Rerun buildconf during package build. This fixes FTBFS on powerpc (because
+    of broken autoconf used by upstream, see #490820).
+  * Remove kfreebsd hack no longer necessary with 1.3.x.
+
+ -- Stefan Fritsch <sf@debian.org>  Mon, 04 Aug 2008 22:50:30 +0200
+
+apr (1.3.2-2) experimental; urgency=low
+
+  * Make tests more verbose to make debugging FTBFS easier.
+  * Ignore testsock and testsockets tests which seem to fail if IPv6 is not
+    configured.
+  * Change watch file to www.apache.org, which is more reliable than
+    www.eu.apache.org.
+
+ -- Stefan Fritsch <sf@debian.org>  Sun, 27 Jul 2008 10:19:00 +0200
+
+apr (1.3.2-1) experimental; urgency=low
+
+  [ Ryan Niebur ]
+  * new upstream version
+  * use symbol files
+
+  [ Stefan Fritsch ]
+  * Upload to experimental
+
+ -- Stefan Fritsch <sf@debian.org>  Wed, 23 Jul 2008 20:49:02 +0200
+
 apr (1.2.12-6) UNRELEASED; urgency=low
 
-  * Fix short description for libapr1-dbg to say debugging symbols, not
-    development headers.  Closes: #508144
+  [ Ryan Niebur ]
+  * Upgraded to policy version 3.8.0
+    - Added support for noopt in DEB_BUILD_OPTIONS
+    - Added a README.source
 
- -- Tollef Fog Heen <tfheen@debian.org>  Thu, 25 Dec 2008 10:24:39 +0100
+  [ Stefan Fritsch ]
+  * Add upstream homepage to debian/control.
 
-apr (1.2.12-5) unstable; urgency=low
-
-  * Actually switch to /dev/urandom instead of only adding a non-functional
-    patch. Closes: #501497
-
- -- Stefan Fritsch <sf@debian.org>  Wed, 08 Oct 2008 00:06:56 +0200
+ -- Ryan Niebur <RyanRyan52@gmail.com>  Fri, 27 Jun 2008 14:39:29 -0700
 
 apr (1.2.12-4) unstable; urgency=medium
 

@@ -1,0 +1,19 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 024_hppa_flock_EWOULDBLOCK_weirdness.dpatch by Stefan Fritsch <sf@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: On hppa, flock returns EAGAIN, not EWOULDBLOCK.
+
+@DPATCH@
+diff -urNad apr-1.3.3~/locks/unix/proc_mutex.c apr-1.3.3/locks/unix/proc_mutex.c
+--- apr-1.3.3~/locks/unix/proc_mutex.c	2008-06-27 21:50:22.000000000 +0200
++++ apr-1.3.3/locks/unix/proc_mutex.c	2009-02-22 22:58:31.457956492 +0100
+@@ -683,7 +683,7 @@
+         rc = flock(mutex->interproc->filedes, LOCK_EX | LOCK_NB);
+     } while (rc < 0 && errno == EINTR);
+     if (rc < 0) {
+-        if (errno == EWOULDBLOCK) {
++        if (errno == EWOULDBLOCK || errno == EAGAIN) {
+             return APR_EBUSY;
+         }
+         return errno;

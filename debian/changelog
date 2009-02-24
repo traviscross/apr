@@ -1,4 +1,4 @@
-apr (1.3.3-2) UNRELEASED; urgency=low
+apr (1.3.3-2) unstable; urgency=low
 
   [ Ryan Niebur ]
   * added support for parallel in DEB_BUILD_OPTIONS
@@ -8,8 +8,9 @@ apr (1.3.3-2) UNRELEASED; urgency=low
   * Correct description for libapr1-dbg (closes: #508144).
   * Work around flock bug on hppa. This fixes the last remaining test failure,
     testprocmutex (closes: #492295).
+  * Upload to unstable.
 
- -- Ryan Niebur <ryanryan52@gmail.com>  Sat, 29 Nov 2008 17:05:49 -0800
+ -- Stefan Fritsch <sf@debian.org>  Mon, 23 Feb 2009 22:44:07 +0100
 
 apr (1.3.3-1) experimental; urgency=low
 

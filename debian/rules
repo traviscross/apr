@@ -91,10 +91,9 @@ IGNORE_TESTSOCK = $(shell IGN=false; \
 test-stamp: build
 	dh_testdir
 	$(MAKE) -C $(BUILDDIR)/test all CFLAGS="$(H_CFLAGS)" LDFLAGS="$(H_LDFLAGS)"
-	ls -al $(BUILDDIR)/test/data || true
-	id || true
 	cd $(BUILDDIR)/test && ./testall -v testsockets testsock || $(IGNORE_TESTSOCK)
-	cd $(BUILDDIR)/test && ./testall -v -x testsockets testsock
+	cd $(BUILDDIR)/test && ( ulimit -S -s 8192 ; ./testall -v testatomic)
+	cd $(BUILDDIR)/test && ./testall -v -x testsockets testsock testatomic
 	touch $@
 
 install: build $(TEST_TARGET)

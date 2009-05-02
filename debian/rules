@@ -41,7 +41,7 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
   MAKEFLAGS += -j$(NUMJOBS)
 endif
 
-ifeq (,$(findstring notest,$(DEB_BUILD_OPTIONS)))
+ifeq (,$(findstring notest,$(DEB_BUILD_OPTIONS))$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 	TEST_TARGET = test
 else
 	TEST_TARGET =
@@ -106,6 +106,8 @@ install: build $(TEST_TARGET)
 
 binary-indep: build install
 
+WITH_OR_WITHOUT_SENDFILE=$(shell dpkg --print-architecture | grep -q kfreebsd && echo without || echo with)
+
 binary-arch: build install
 	dh_testdir
 	dh_testroot
@@ -117,7 +119,7 @@ binary-arch: build install
 	dh_strip --dbg-package=libapr1-dbg
 	dh_compress
 	dh_fixperms
-	dh_makeshlibs
+	dh_makeshlibs -- -Idebian/symbols.$(WITH_OR_WITHOUT_SENDFILE)-sendfile
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol

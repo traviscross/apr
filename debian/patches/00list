@@ -6,4 +6,4 @@
 022_hurd_path_max.dpatch
 023_fix_doxygen.dpatch
 024_hppa_flock_EWOULDBLOCK_weirdness.dpatch
-025_define_GNU_SOURCE_earlier.dpatch
+025_GNU_SOURCE_earlier.dpatch

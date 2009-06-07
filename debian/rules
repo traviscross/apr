@@ -8,8 +8,9 @@ include /usr/share/dpatch/dpatch.make
 
 # These are used for cross-compiling and for saving the configure script
 # # from having to guess our platform (since we know it already)
-DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_BUILD_GNU_SYSTEM ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_SYSTEM)
 
 BUILDDIR := build-$(DEB_HOST_GNU_TYPE)
 
@@ -47,6 +48,11 @@ else
 	TEST_TARGET =
 endif
 
+# disable tests on hurd until they are fixed (#530286)
+ifeq (gnu, $(DEB_BUILD_GNU_SYSTEM))
+	TEST_TARGET =
+endif
+
 SHELL=/bin/bash
 
 $(BUILDDIR)/config.status: patch-stamp
@@ -62,6 +68,10 @@ $(BUILDDIR)/config.status: patch-stamp
 	gcc -I$(CURDIR)/include -I$(BUILDDIR)/include `$(BUILDDIR)/apr-1-config --cppflags` -o debian/ino_t_test debian/ino_t_test.c
 	debian/ino_t_test
 	rm -f debian/ino_t_test
+ifeq (gnu, $(DEB_BUILD_GNU_SYSTEM))
+	# multicast not supported on Hurd
+	sed -i '/HAVE_STRUCT_IPMREQ/ d' $(BUILDDIR)/include/arch/unix/apr_private.h
+endif
 
 build: patch-stamp build-stamp
 

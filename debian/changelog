@@ -1,4 +1,4 @@
-apr (1.3.4-1) UNRELEASED; urgency=low
+apr (1.3.4-1) unstable; urgency=low
 
   * New upstream version
   * Fix FTBFS on hurd (thanks to Marc Dequènes, closes: #530286)
@@ -8,7 +8,7 @@ apr (1.3.4-1) UNRELEASED; urgency=low
       HAVE_STRUCT_IPMREQ manually). 
   * Omit spurious libs from apr-1-config --libs output (closes: #463399)
 
- -- Stefan Fritsch <sf@debian.org>  Sat, 30 May 2009 17:30:06 +0200
+ -- Stefan Fritsch <sf@debian.org>  Sun, 07 Jun 2009 21:15:32 +0200
 
 apr (1.3.3-4) unstable; urgency=low
 

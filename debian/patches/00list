@@ -7,3 +7,4 @@
 023_fix_doxygen.dpatch
 024_hppa_flock_EWOULDBLOCK_weirdness.dpatch
 025_GNU_SOURCE_earlier.dpatch
+026_omit_extra_libs.dpatch

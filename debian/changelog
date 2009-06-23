@@ -1,4 +1,4 @@
-apr (1.3.5-2) UNRELEASED; urgency=low
+apr (1.3.5-2) unstable; urgency=low
 
   * Mark non-inheritable file descriptors with FD_CLOEXEC, to prevent leaking
     them to processes exec'ed by applications that fail to use the apr API
@@ -6,7 +6,7 @@ apr (1.3.5-2) UNRELEASED; urgency=low
   * Bump standards-version (no changes).
   * Override soname lintian warning (too late to change that).
 
- -- Stefan Fritsch <sf@debian.org>  Thu, 11 Jun 2009 16:25:26 +0200
+ -- Stefan Fritsch <sf@debian.org>  Tue, 23 Jun 2009 22:15:02 +0200
 
 apr (1.3.5-1) unstable; urgency=low
 

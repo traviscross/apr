@@ -130,6 +130,7 @@ binary-arch: build install
 	dh_installman -plibapr1-dev debian/apr-1-config.1
 	dh_link
 	dh_strip --dbg-package=libapr1-dbg
+	dh_lintian
 	dh_compress
 	dh_fixperms
 	dh_makeshlibs -- -Idebian/symbols.$(WITH_OR_WITHOUT_SENDFILE)-sendfile

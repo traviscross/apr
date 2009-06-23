@@ -1,0 +1,339 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Use FD_CLOEXEC for fds, but don't use the new APIs yet. PR 46425 / #366124
+
+@DPATCH@
+diff -urNad trunk~/file_io/netware/mktemp.c trunk/file_io/netware/mktemp.c
+--- trunk~/file_io/netware/mktemp.c	2009-06-23 21:33:59.000000000 +0200
++++ trunk/file_io/netware/mktemp.c	2009-06-23 21:47:32.058069935 +0200
+@@ -19,6 +19,7 @@
+ #include "apr_strings.h" /* prototype of apr_mkstemp() */
+ #include "apr_arch_file_io.h" /* prototype of apr_mkstemp() */
+ #include "apr_portable.h" /* for apr_os_file_put() */
++#include "apr_arch_inherit.h"
+ 
+ #include <stdlib.h> /* for mkstemp() - Single Unix */
+ 
+@@ -43,6 +44,15 @@
+ 
+ 
+ 	if (!(flags & APR_FILE_NOCLEANUP)) {
++            int flags;
++
++            if ((flags = fcntl((*fp)->filedes, F_GETFD)) == -1)
++                return errno;
++
++            flags |= FD_CLOEXEC;
++            if (fcntl((*fp)->filedes, F_SETFD, flags) == -1)
++                return errno;
++
+ 	    apr_pool_cleanup_register((*fp)->pool, (void *)(*fp),
+ 				      apr_unix_file_cleanup,
+ 				      apr_unix_child_file_cleanup);
+diff -urNad trunk~/file_io/unix/filedup.c trunk/file_io/unix/filedup.c
+--- trunk~/file_io/unix/filedup.c	2009-06-23 21:33:59.000000000 +0200
++++ trunk/file_io/unix/filedup.c	2009-06-23 21:48:19.830740673 +0200
+@@ -25,13 +25,27 @@
+                              int which_dup)
+ {
+     int rv;
+-    
++
+     if (which_dup == 2) {
+         if ((*new_file) == NULL) {
+             /* We can't dup2 unless we have a valid new_file */
+             return APR_EINVAL;
+         }
+         rv = dup2(old_file->filedes, (*new_file)->filedes);
++        if (!((*new_file)->flags & (APR_FILE_NOCLEANUP|APR_INHERIT))) {
++            int flags;
++
++            if (rv == -1)
++                return errno;
++
++            if ((flags = fcntl((*new_file)->filedes, F_GETFD)) == -1)
++                return errno;
++
++            flags |= FD_CLOEXEC;
++            if (fcntl((*new_file)->filedes, F_SETFD, flags) == -1)
++                return errno;
++
++        }
+     } else {
+         rv = dup(old_file->filedes);
+     }
+diff -urNad trunk~/file_io/unix/mktemp.c trunk/file_io/unix/mktemp.c
+--- trunk~/file_io/unix/mktemp.c	2009-06-23 21:33:59.000000000 +0200
++++ trunk/file_io/unix/mktemp.c	2009-06-23 21:47:32.058069935 +0200
+@@ -51,6 +51,7 @@
+ #include "apr_strings.h" /* prototype of apr_mkstemp() */
+ #include "apr_arch_file_io.h" /* prototype of apr_mkstemp() */
+ #include "apr_portable.h" /* for apr_os_file_put() */
++#include "apr_arch_inherit.h"
+ 
+ #ifndef HAVE_MKSTEMP
+ 
+@@ -203,6 +204,15 @@
+     (*fp)->fname = apr_pstrdup(p, template);
+ 
+     if (!(flags & APR_FILE_NOCLEANUP)) {
++        int flags;
++
++        if ((flags = fcntl(fd, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl(fd, F_SETFD, flags) == -1)
++            return errno;
++
+         apr_pool_cleanup_register((*fp)->pool, (void *)(*fp),
+                                   apr_unix_file_cleanup,
+                                   apr_unix_child_file_cleanup);
+diff -urNad trunk~/file_io/unix/open.c trunk/file_io/unix/open.c
+--- trunk~/file_io/unix/open.c	2009-06-23 21:33:59.000000000 +0200
++++ trunk/file_io/unix/open.c	2009-06-23 21:48:35.272286581 +0200
+@@ -155,6 +155,16 @@
+     if (fd < 0) {
+        return errno;
+     }
++    if (!(flag & APR_FILE_NOCLEANUP)) {
++        int flags;
++
++        if ((flags = fcntl(fd, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl(fd, F_SETFD, flags) == -1)
++            return errno;
++    }
+ 
+     (*new) = (apr_file_t *)apr_pcalloc(pool, sizeof(apr_file_t));
+     (*new)->pool = pool;
+@@ -337,6 +347,15 @@
+         return APR_EINVAL;
+     }
+     if (thefile->flags & APR_INHERIT) {
++        int flags;
++
++        if ((flags = fcntl(thefile->filedes, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl(thefile->filedes, F_SETFD, flags) == -1)
++            return errno;
++
+         thefile->flags &= ~APR_INHERIT;
+         apr_pool_child_cleanup_set(thefile->pool,
+                                    (void *)thefile,
+diff -urNad trunk~/include/arch/unix/apr_arch_inherit.h trunk/include/arch/unix/apr_arch_inherit.h
+--- trunk~/include/arch/unix/apr_arch_inherit.h	2009-06-23 21:33:59.000000000 +0200
++++ trunk/include/arch/unix/apr_arch_inherit.h	2009-06-23 21:47:32.058069935 +0200
+@@ -27,6 +27,12 @@
+     if (the##name->flag & APR_FILE_NOCLEANUP)                       \
+         return APR_EINVAL;                                          \
+     if (!(the##name->flag & APR_INHERIT)) {                         \
++        int flags = fcntl(the##name->name##des, F_GETFD);           \
++        if (flags == -1)                                            \
++            return errno;                                           \
++        flags &= ~(FD_CLOEXEC);                                     \
++        if (fcntl(the##name->name##des, F_SETFD, flags) == -1)      \
++            return errno;                                           \
+         the##name->flag |= APR_INHERIT;                             \
+         apr_pool_child_cleanup_set(the##name->pool,                 \
+                                    (void *)the##name,               \
+@@ -41,6 +47,12 @@
+     if (the##name->flag & APR_FILE_NOCLEANUP)                       \
+         return APR_EINVAL;                                          \
+     if (the##name->flag & APR_INHERIT) {                            \
++        int flags;                                                  \
++        if ((flags = fcntl(the##name->name##des, F_GETFD)) == -1)   \
++            return errno;                                           \
++        flags |= FD_CLOEXEC;                                        \
++        if (fcntl(the##name->name##des, F_SETFD, flags) == -1)      \
++            return errno;                                           \
+         the##name->flag &= ~APR_INHERIT;                            \
+         apr_pool_child_cleanup_set(the##name->pool,                 \
+                                    (void *)the##name,               \
+diff -urNad trunk~/network_io/unix/sockets.c trunk/network_io/unix/sockets.c
+--- trunk~/network_io/unix/sockets.c	2009-06-23 21:33:59.000000000 +0200
++++ trunk/network_io/unix/sockets.c	2009-06-23 21:48:56.354072152 +0200
+@@ -130,6 +130,17 @@
+     }
+     set_socket_vars(*new, family, type, protocol);
+ 
++    {
++        int flags;
++
++        if ((flags = fcntl((*new)->socketdes, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl((*new)->socketdes, F_SETFD, flags) == -1)
++            return errno;
++    }
++
+     (*new)->timeout = -1;
+     (*new)->inherit = 0;
+     apr_pool_cleanup_register((*new)->pool, (void *)(*new), socket_cleanup,
+@@ -255,6 +266,17 @@
+         (*new)->local_interface_unknown = 1;
+     }
+ 
++    {
++        int flags;
++
++        if ((flags = fcntl((*new)->socketdes, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl((*new)->socketdes, F_SETFD, flags) == -1)
++            return errno;
++    }
++
+     (*new)->inherit = 0;
+     apr_pool_cleanup_register((*new)->pool, (void *)(*new), socket_cleanup,
+                               socket_cleanup);
+diff -urNad trunk~/poll/unix/epoll.c trunk/poll/unix/epoll.c
+--- trunk~/poll/unix/epoll.c	2009-06-23 21:33:59.000000000 +0200
++++ trunk/poll/unix/epoll.c	2009-06-23 21:47:59.564064269 +0200
+@@ -15,6 +15,7 @@
+  */
+ 
+ #include "apr_arch_poll_private.h"
++#include "apr_arch_inherit.h"
+ 
+ #ifdef POLLSET_USES_EPOLL
+ 
+@@ -101,6 +102,17 @@
+         return errno;
+     }
+ 
++    {
++        int flags;
++
++        if ((flags = fcntl(fd, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl(fd, F_SETFD, flags) == -1)
++            return errno;
++    }
++
+     *pollset = apr_palloc(p, sizeof(**pollset));
+ #if APR_HAS_THREADS
+     if ((flags & APR_POLLSET_THREADSAFE) &&
+@@ -325,6 +337,17 @@
+         *pollcb = NULL;
+         return apr_get_netos_error();
+     }
++
++    {
++        int flags;
++
++        if ((flags = fcntl(fd, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl(fd, F_SETFD, flags) == -1)
++            return errno;
++    }
+     
+     *pollcb = apr_palloc(p, sizeof(**pollcb));
+     (*pollcb)->nalloc = size;
+diff -urNad trunk~/poll/unix/kqueue.c trunk/poll/unix/kqueue.c
+--- trunk~/poll/unix/kqueue.c	2009-06-23 21:33:59.000000000 +0200
++++ trunk/poll/unix/kqueue.c	2009-06-23 21:47:32.058069935 +0200
+@@ -15,6 +15,7 @@
+  */
+ 
+ #include "apr_arch_poll_private.h"
++#include "apr_arch_inherit.h"
+ 
+ #ifdef POLLSET_USES_KQUEUE
+ 
+@@ -101,6 +102,17 @@
+         return apr_get_netos_error();
+     }
+ 
++    {
++        int flags;
++
++        if ((flags = fcntl((*pollset)->kqueue_fd, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl((*pollset)->kqueue_fd, F_SETFD, flags) == -1)
++            return errno;
++    }
++
+     apr_pool_cleanup_register(p, (void *) (*pollset), backend_cleanup,
+                               apr_pool_cleanup_null);
+ 
+@@ -309,7 +321,18 @@
+         *pollcb = NULL;
+         return apr_get_netos_error();
+     }
+-    
++
++    {
++        int flags;
++
++        if ((flags = fcntl(fd, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl(fd, F_SETFD, flags) == -1)
++            return errno;
++    }
++ 
+     *pollcb = apr_palloc(p, sizeof(**pollcb));
+     (*pollcb)->nalloc = size;
+     (*pollcb)->pool = p;
+diff -urNad trunk~/poll/unix/port.c trunk/poll/unix/port.c
+--- trunk~/poll/unix/port.c	2009-06-23 21:33:59.000000000 +0200
++++ trunk/poll/unix/port.c	2009-06-23 21:47:32.058069935 +0200
+@@ -16,6 +16,7 @@
+ 
+ #include "apr_arch_poll_private.h"
+ #include "apr_atomic.h"
++#include "apr_arch_inherit.h"
+ 
+ #ifdef POLLSET_USES_PORT
+ 
+@@ -127,6 +128,17 @@
+         return APR_ENOMEM;
+     }
+ 
++    {
++        int flags;
++
++        if ((flags = fcntl((*pollset)->port_fd, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl((*pollset)->port_fd, F_SETFD, flags) == -1)
++            return errno;
++    }
++
+     apr_pool_cleanup_register(p, (void *) (*pollset), backend_cleanup,
+                               apr_pool_cleanup_null);
+ 
+@@ -391,6 +403,17 @@
+         return apr_get_netos_error();
+     }
+ 
++    {
++        int flags;
++
++        if ((flags = fcntl(fd, F_GETFD)) == -1)
++            return errno;
++
++        flags |= FD_CLOEXEC;
++        if (fcntl(fd, F_SETFD, flags) == -1)
++            return errno;
++    }
++
+     *pollcb = apr_palloc(p, sizeof(**pollcb));
+     (*pollcb)->nalloc = size;
+     (*pollcb)->pool = p;

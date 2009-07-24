@@ -1,8 +1,8 @@
-apr (1.3.7-1) UNRELEASED; urgency=low
+apr (1.3.7-1) unstable; urgency=low
 
   * New upstream release.
 
- -- Stefan Fritsch <sf@debian.org>  Fri, 24 Jul 2009 10:38:55 +0200
+ -- Stefan Fritsch <sf@debian.org>  Fri, 24 Jul 2009 11:12:20 +0200
 
 apr (1.3.5-2) unstable; urgency=low
 

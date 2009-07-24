@@ -1,0 +1,207 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Don't use the new APIs yet. PR 46425 / #366124
+
+@DPATCH@
+diff -urNad apr-1.3.7~/file_io/unix/filedup.c apr-1.3.7/file_io/unix/filedup.c
+--- apr-1.3.7~/file_io/unix/filedup.c	2009-06-23 01:54:28.000000000 +0200
++++ apr-1.3.7/file_io/unix/filedup.c	2009-07-24 10:38:14.074013203 +0200
+@@ -25,20 +25,12 @@
+                              int which_dup)
+ {
+     int rv;
+-#ifdef HAVE_DUP3
+-    int flags = 0;
+-#endif
+ 
+     if (which_dup == 2) {
+         if ((*new_file) == NULL) {
+             /* We can't dup2 unless we have a valid new_file */
+             return APR_EINVAL;
+         }
+-#ifdef HAVE_DUP3
+-        if (!((*new_file)->flags & (APR_FILE_NOCLEANUP|APR_INHERIT)))
+-            flags |= O_CLOEXEC;
+-        rv = dup3(old_file->filedes, (*new_file)->filedes, flags);
+-#else
+         rv = dup2(old_file->filedes, (*new_file)->filedes);
+         if (!((*new_file)->flags & (APR_FILE_NOCLEANUP|APR_INHERIT))) {
+             int flags;
+@@ -54,7 +46,6 @@
+                 return errno;
+ 
+         }
+-#endif
+     } else {
+         rv = dup(old_file->filedes);
+     }
+diff -urNad apr-1.3.7~/file_io/unix/open.c apr-1.3.7/file_io/unix/open.c
+--- apr-1.3.7~/file_io/unix/open.c	2009-06-23 01:54:28.000000000 +0200
++++ apr-1.3.7/file_io/unix/open.c	2009-07-24 10:38:14.074013203 +0200
+@@ -127,15 +127,7 @@
+         oflags |= O_BINARY;
+     }
+ #endif
+-
+-#ifdef O_CLOEXEC
+-    /* Introduced in Linux 2.6.23. Silently ignored on earlier Linux kernels.
+-     */
+-    if (!(flag & APR_FILE_NOCLEANUP)) {
+-        oflags |= O_CLOEXEC;
+-}
+-#endif
+- 
++    
+ #if APR_HAS_LARGE_FILES && defined(_LARGEFILE64_SOURCE)
+     oflags |= O_LARGEFILE;
+ #elif defined(O_LARGEFILE)
+diff -urNad apr-1.3.7~/network_io/unix/sockets.c apr-1.3.7/network_io/unix/sockets.c
+--- apr-1.3.7~/network_io/unix/sockets.c	2009-06-23 01:54:28.000000000 +0200
++++ apr-1.3.7/network_io/unix/sockets.c	2009-07-24 10:38:14.074013203 +0200
+@@ -83,11 +83,7 @@
+ apr_status_t apr_socket_create(apr_socket_t **new, int ofamily, int type,
+                                int protocol, apr_pool_t *cont)
+ {
+-    int family = ofamily, flags = 0;
+-
+-#ifdef HAVE_SOCK_CLOEXEC
+-    flags |= SOCK_CLOEXEC;
+-#endif
++    int family = ofamily;
+ 
+     if (family == APR_UNSPEC) {
+ #if APR_HAVE_IPV6
+@@ -100,19 +96,19 @@
+     alloc_socket(new, cont);
+ 
+ #ifndef BEOS_R5
+-    (*new)->socketdes = socket(family, type|flags, protocol);
++    (*new)->socketdes = socket(family, type, protocol);
+ #else
+     /* For some reason BeOS R5 has an unconventional protocol numbering,
+      * so we need to translate here. */
+     switch (protocol) {
+     case 0:
+-        (*new)->socketdes = socket(family, type|flags, 0);
++        (*new)->socketdes = socket(family, type, 0);
+         break;
+     case APR_PROTO_TCP:
+-        (*new)->socketdes = socket(family, type|flags, IPPROTO_TCP);
++        (*new)->socketdes = socket(family, type, IPPROTO_TCP);
+         break;
+     case APR_PROTO_UDP:
+-        (*new)->socketdes = socket(family, type|flags, IPPROTO_UDP);
++        (*new)->socketdes = socket(family, type, IPPROTO_UDP);
+         break;
+     case APR_PROTO_SCTP:
+     default:
+@@ -125,7 +121,7 @@
+ #if APR_HAVE_IPV6
+     if ((*new)->socketdes < 0 && ofamily == APR_UNSPEC) {
+         family = APR_INET;
+-        (*new)->socketdes = socket(family, type|flags, protocol);
++        (*new)->socketdes = socket(family, type, protocol);
+     }
+ #endif
+ 
+@@ -134,7 +130,6 @@
+     }
+     set_socket_vars(*new, family, type, protocol);
+ 
+-#ifndef HAVE_SOCK_CLOEXEC
+     {
+         int flags;
+ 
+@@ -145,7 +140,6 @@
+         if (fcntl((*new)->socketdes, F_SETFD, flags) == -1)
+             return errno;
+     }
+-#endif
+ 
+     (*new)->timeout = -1;
+     (*new)->inherit = 0;
+@@ -198,11 +192,7 @@
+ 
+     sa.salen = sizeof(sa.sa);
+ 
+-#ifdef HAVE_ACCEPT4
+-    s = accept4(sock->socketdes, (struct sockaddr *)&sa.sa, &sa.salen, SOCK_CLOEXEC);
+-#else
+     s = accept(sock->socketdes, (struct sockaddr *)&sa.sa, &sa.salen);
+-#endif
+ 
+     if (s < 0) {
+         return errno;
+@@ -276,7 +266,6 @@
+         (*new)->local_interface_unknown = 1;
+     }
+ 
+-#ifndef HAVE_ACCEPT4
+     {
+         int flags;
+ 
+@@ -287,7 +276,6 @@
+         if (fcntl((*new)->socketdes, F_SETFD, flags) == -1)
+             return errno;
+     }
+-#endif
+ 
+     (*new)->inherit = 0;
+     apr_pool_cleanup_register((*new)->pool, (void *)(*new), socket_cleanup,
+diff -urNad apr-1.3.7~/poll/unix/epoll.c apr-1.3.7/poll/unix/epoll.c
+--- apr-1.3.7~/poll/unix/epoll.c	2009-06-23 01:54:28.000000000 +0200
++++ apr-1.3.7/poll/unix/epoll.c	2009-07-24 10:38:14.074013203 +0200
+@@ -96,17 +96,12 @@
+ #endif
+     int fd;
+ 
+-#ifdef HAVE_EPOLL_CREATE1
+-    fd = epoll_create1(EPOLL_CLOEXEC);
+-#else
+     fd = epoll_create(size);
+-#endif
+     if (fd < 0) {
+         *pollset = NULL;
+         return errno;
+     }
+ 
+-#ifndef HAVE_EPOLL_CREATE1
+     {
+         int flags;
+ 
+@@ -117,7 +112,6 @@
+         if (fcntl(fd, F_SETFD, flags) == -1)
+             return errno;
+     }
+-#endif
+ 
+     *pollset = apr_palloc(p, sizeof(**pollset));
+ #if APR_HAS_THREADS
+@@ -337,18 +331,13 @@
+ {
+     int fd;
+     
+-#ifdef HAVE_EPOLL_CREATE1
+-    fd = epoll_create1(EPOLL_CLOEXEC);
+-#else
+     fd = epoll_create(size);
+-#endif
+     
+     if (fd < 0) {
+         *pollcb = NULL;
+         return apr_get_netos_error();
+     }
+ 
+-#ifndef HAVE_EPOLL_CREATE1
+     {
+         int flags;
+ 
+@@ -359,7 +348,6 @@
+         if (fcntl(fd, F_SETFD, flags) == -1)
+             return errno;
+     }
+-#endif
+     
+     *pollcb = apr_palloc(p, sizeof(**pollcb));
+     (*pollcb)->nalloc = size;

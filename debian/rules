@@ -17,12 +17,8 @@ BUILDDIR := build-$(DEB_HOST_GNU_TYPE)
 CFLAGS := $(CFLAGS) -pipe -Wall -g
 
 # hardening options
-H_CFLAGS := -Wformat -Wformat-security -D_FORTIFY_SOURCE=2
+H_CFLAGS := -Wformat -Wformat-security -D_FORTIFY_SOURCE=2 -fstack-protector
 H_LDFLAGS := -Wl,-z,relro
-# do not enable -fstack-protector on arm and armel, see #477772, #469517
-ifeq (,$(findstring arm,$(DEB_HOST_GNU_TYPE)))
-	H_CFLAGS += -fstack-protector
-endif
 
 CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no
 

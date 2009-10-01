@@ -11,6 +11,7 @@ include /usr/share/dpatch/dpatch.make
 DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_BUILD_GNU_SYSTEM ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_SYSTEM)
+DEB_BUILD_ARCH       ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 BUILDDIR := build-$(DEB_HOST_GNU_TYPE)
 
@@ -21,6 +22,11 @@ H_CFLAGS := -Wformat -Wformat-security -D_FORTIFY_SOURCE=2 -fstack-protector
 H_LDFLAGS := -Wl,-z,relro
 
 CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no
+
+# SH4 cannot use proc_pthread.
+ifneq (,$(findstring sh4,$(DEB_BUILD_ARCH)))
+  CONFFLAGS += apr_cv_hasprocpthreadser=no ac_cv_define_PTHREAD_PROCESS_SHARED=no
+endif
 
 # Enable debug builds
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))

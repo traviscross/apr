@@ -96,7 +96,7 @@ clean: unpatch
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp test-stamp debian/ino_t_test
-	rm -f configure build/ltmain.sh build/libtool.m4 build-outputs.mk include/arch/unix/apr_private.h.in
+	rm -f configure build/ltmain.sh build/libtool.m4 build-outputs.mk include/arch/unix/apr_private.h.in build/ltdl.m4
 	rm -rf $(BUILDDIR)
 
 	dh_clean

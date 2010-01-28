@@ -1,3 +1,13 @@
+apr (1.4.2-2) UNRELEASED; urgency=low
+
+  * Fix FTBFS on kfreebsd: Create os specific symbols file: With *_epoll on
+    linux, with *_kqueue on kfreebsd, with neither on hurd.
+  * Bump Standards-Version:
+    - In the rules file, use the DEB_*_ARCH* instead of the DEB_*_GNU*
+      variables, where applicable.
+
+ -- Stefan Fritsch <sf@debian.org>  Thu, 28 Jan 2010 19:47:48 +0100
+
 apr (1.4.2-1) experimental; urgency=low
 
   [ Stefan Fritsch ]

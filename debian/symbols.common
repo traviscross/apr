@@ -232,7 +232,6 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_pollcb_create@Base 1.3.2
  apr_pollcb_create_ex@Base 1.4.2
  apr_pollcb_poll@Base 1.3.2
- apr_pollcb_provider_epoll@Base 1.4.2
  apr_pollcb_provider_poll@Base 1.4.2
  apr_pollcb_remove@Base 1.3.2
  apr_pollset_add@Base 1.2.7
@@ -242,7 +241,6 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_pollset_drain_wakeup_pipe@Base 1.4.2
  apr_pollset_method_name@Base 1.4.2
  apr_pollset_poll@Base 1.2.7
- apr_pollset_provider_epoll@Base 1.4.2
  apr_pollset_provider_poll@Base 1.4.2
  apr_pollset_provider_select@Base 1.4.2
  apr_pollset_remove@Base 1.2.7

@@ -68,27 +68,3 @@ diff -urNad apr~/include/apr.h.in apr/include/apr.h.in
   */
  #define APR_DECLARE_DATA
  
-diff -urNad apr~/include/apr_hash.h apr/include/apr_hash.h
---- apr~/include/apr_hash.h	2006-09-12 07:09:28.000000000 -0700
-+++ apr/include/apr_hash.h	2008-06-27 20:12:50.000000000 -0700
-@@ -128,10 +128,7 @@
-  * progress at the same time.
-  */
- /**
-- * @example
-- *
-- * <PRE>
-- * 
-+ * @code
-  * int sum_values(apr_pool_t *p, apr_hash_t *ht)
-  * {
-  *     apr_hash_index_t *hi;
-@@ -143,7 +140,7 @@
-  *     }
-  *     return sum;
-  * }
-- * </PRE>
-+ * @endcode
-  */
- APR_DECLARE(apr_hash_index_t *) apr_hash_first(apr_pool_t *p, apr_hash_t *ht);
- 

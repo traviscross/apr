@@ -75,6 +75,7 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_file_copy@Base 1.2.7
  apr_file_data_get@Base 1.2.7
  apr_file_data_set@Base 1.2.7
+ apr_file_datasync@Base 1.4.2
  apr_file_dup2@Base 1.2.7
  apr_file_dup@Base 1.2.7
  apr_file_eof@Base 1.2.7
@@ -87,6 +88,7 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_file_info_get_locked@Base 1.2.11
  apr_file_inherit_set@Base 1.2.7
  apr_file_inherit_unset@Base 1.2.7
+ apr_file_link@Base 1.4.2
  apr_file_lock@Base 1.2.7
  apr_file_mktemp@Base 1.2.7
  apr_file_mtime_set@Base 1.2.7
@@ -114,6 +116,7 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_file_rename@Base 1.2.7
  apr_file_seek@Base 1.2.7
  apr_file_setaside@Base 1.2.7
+ apr_file_sync@Base 1.4.2
  apr_file_trunc@Base 1.2.7
  apr_file_ungetc@Base 1.2.7
  apr_file_unlock@Base 1.2.7
@@ -146,12 +149,15 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_global_mutex_create@Base 1.2.7
  apr_global_mutex_destroy@Base 1.2.7
  apr_global_mutex_lock@Base 1.2.7
+ apr_global_mutex_lockfile@Base 1.4.2
+ apr_global_mutex_name@Base 1.4.2
  apr_global_mutex_pool_get@Base 1.2.7
  apr_global_mutex_trylock@Base 1.2.7
  apr_global_mutex_unlock@Base 1.2.7
  apr_hash_clear@Base 1.3.2
  apr_hash_copy@Base 1.2.7
  apr_hash_count@Base 1.2.7
+ apr_hash_do@Base 1.4.2
  apr_hash_first@Base 1.2.7
  apr_hash_get@Base 1.2.7
  apr_hash_make@Base 1.2.7
@@ -221,15 +227,26 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_pcalloc_debug@Base 1.2.7
  apr_pmemdup@Base 1.2.7
  apr_poll@Base 1.2.7
+ apr_poll_method_defname@Base 1.4.2
  apr_pollcb_add@Base 1.3.2
  apr_pollcb_create@Base 1.3.2
+ apr_pollcb_create_ex@Base 1.4.2
  apr_pollcb_poll@Base 1.3.2
+ apr_pollcb_provider_epoll@Base 1.4.2
+ apr_pollcb_provider_poll@Base 1.4.2
  apr_pollcb_remove@Base 1.3.2
  apr_pollset_add@Base 1.2.7
  apr_pollset_create@Base 1.2.7
+ apr_pollset_create_ex@Base 1.4.2
  apr_pollset_destroy@Base 1.2.7
+ apr_pollset_drain_wakeup_pipe@Base 1.4.2
+ apr_pollset_method_name@Base 1.4.2
  apr_pollset_poll@Base 1.2.7
+ apr_pollset_provider_epoll@Base 1.4.2
+ apr_pollset_provider_poll@Base 1.4.2
+ apr_pollset_provider_select@Base 1.4.2
  apr_pollset_remove@Base 1.2.7
+ apr_pollset_wakeup@Base 1.4.2
  apr_pool_abort_get@Base 1.2.7
  apr_pool_abort_set@Base 1.2.7
  apr_pool_allocator_get@Base 1.2.7
@@ -338,6 +355,7 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_socket_accept@Base 1.2.7
  apr_socket_addr_get@Base 1.2.7
  apr_socket_atmark@Base 1.2.7
+ apr_socket_atreadeof@Base 1.4.2
  apr_socket_bind@Base 1.2.7
  apr_socket_close@Base 1.2.7
  apr_socket_connect@Base 1.2.7

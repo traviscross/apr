@@ -7,4 +7,3 @@
 023_fix_doxygen.dpatch
 025_GNU_SOURCE_earlier.dpatch
 026_omit_extra_libs.dpatch
-027_no_new_syscalls.dpatch

@@ -21,7 +21,14 @@ CFLAGS := $(CFLAGS) -pipe -Wall -g
 H_CFLAGS := -Wformat -Wformat-security -D_FORTIFY_SOURCE=2 -fstack-protector
 H_LDFLAGS := -Wl,-z,relro
 
-CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no
+# API to min kernel map: 
+# 2.6.27: dup3, SOCK_CLOEXEC, epoll_create1
+# 2.6.28: accept4
+CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no \
+	apr_cv_sock_cloexec=no \
+	apr_cv_epoll_create1=no \
+	apr_cv_dup3=no \
+	apr_cv_accept4=no
 
 # SH4 cannot use proc_pthread.
 ifneq (,$(findstring sh4,$(DEB_BUILD_ARCH)))

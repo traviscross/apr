@@ -81,6 +81,20 @@ ifeq (hurd, $(DEB_BUILD_ARCH_OS))
 	# multicast not supported on Hurd
 	sed -i '/HAVE_STRUCT_IPMREQ/ d' $(BUILDDIR)/include/arch/unix/apr_private.h
 endif
+ifeq (linux, $(DEB_BUILD_ARCH_OS))
+	if grep -q APR_HAS_POSIXSEM_SERIALIZE.*0 $(BUILDDIR)/include/apr.h ;\
+	then \
+		echo "WARNING: This is Linux but configure did not detect POSIX semaphores." ;\
+		if [ "$(stat -c '%d' /dev/shm)" = "$(stat -c '%d' /dev)" ] ;\
+		then \
+			echo "ERROR: POSIX semaphores not usable and /dev/shm not mounted." ;\
+			echo "ERROR: Aborting." ;\
+			echo "HINT: If you are using pbuilder or cowbuilder, add /dev/shm to BINDMOUNTS" ;\
+			echo "HINT: in pbuilderrc" ;\
+			exit 1 ;\
+		fi ;\
+	fi
+endif
 
 build: patch-stamp build-stamp
 

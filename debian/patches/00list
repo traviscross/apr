@@ -7,3 +7,4 @@
 023_fix_doxygen.dpatch
 025_GNU_SOURCE_earlier.dpatch
 026_omit_extra_libs.dpatch
+027_apr_socket_addr_get_lifetime.dpatch

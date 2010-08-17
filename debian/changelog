@@ -1,6 +1,10 @@
 apr (1.4.2-4) UNRELEASED; urgency=low
 
   * Fix building with libtool 1.x. Closes: #575380
+  * Fix pool life-time issue with apr_socket_addr_get(), resulting in a memory
+    leak in Apache mod_proxy.
+  * Under Linux, if configure does not detect POSIX semaphores due to /dev/shm
+    not being mounted, abort the build. Closes: #591286
 
  -- Stefan Fritsch <sf@debian.org>  Sat, 22 May 2010 16:04:40 +0200
 

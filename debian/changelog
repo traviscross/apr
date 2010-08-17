@@ -1,4 +1,4 @@
-apr (1.4.2-4) UNRELEASED; urgency=low
+apr (1.4.2-4) unstable; urgency=low
 
   * Fix building with libtool 1.x. Closes: #575380
   * Fix pool life-time issue with apr_socket_addr_get(), resulting in a memory
@@ -6,7 +6,7 @@ apr (1.4.2-4) UNRELEASED; urgency=low
   * Under Linux, if configure does not detect POSIX semaphores due to /dev/shm
     not being mounted, abort the build. Closes: #591286
 
- -- Stefan Fritsch <sf@debian.org>  Sat, 22 May 2010 16:04:40 +0200
+ -- Stefan Fritsch <sf@debian.org>  Tue, 17 Aug 2010 23:16:56 +0200
 
 apr (1.4.2-3) unstable; urgency=low
 

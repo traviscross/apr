@@ -30,6 +30,12 @@ CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no \
 	apr_cv_dup3=no \
 	apr_cv_accept4=no
 
+# apr_cv_mutex_robust_shared causes hangs in procmutex test on armel
+# let's just disable this for squeeze
+ifneq (,$(findstring armel,$(DEB_BUILD_ARCH)))
+  CONFFLAGS += apr_cv_mutex_robust_shared=no
+endif
+
 # SH4 cannot use proc_pthread.
 ifneq (,$(findstring sh4,$(DEB_BUILD_ARCH)))
   CONFFLAGS += apr_cv_hasprocpthreadser=no ac_cv_define_PTHREAD_PROCESS_SHARED=no

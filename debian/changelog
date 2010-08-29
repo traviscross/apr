@@ -1,3 +1,10 @@
+apr (1.4.2-5) unstable; urgency=medium
+
+  * Fix FTBFS on armel: Disable robust pthread mutexes on armel, as they
+    cause a hang in the test suite.
+
+ -- Stefan Fritsch <sf@debian.org>  Sun, 29 Aug 2010 22:00:11 +0200
+
 apr (1.4.2-4) unstable; urgency=low
 
   * Fix building with libtool 1.x. Closes: #575380

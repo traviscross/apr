@@ -1,3 +1,10 @@
+apr (1.4.2-6) unstable; urgency=low
+
+  * Also disable robust pthread mutexes on alpha, to fix hang in the test
+    suite on Linux 2.6.32.
+
+ -- Stefan Fritsch <sf@debian.org>  Mon, 30 Aug 2010 23:42:23 +0200
+
 apr (1.4.2-5) unstable; urgency=medium
 
   * Fix FTBFS on armel: Disable robust pthread mutexes on armel, as they

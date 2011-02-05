@@ -148,6 +148,7 @@ install: build $(TEST_TARGET)
 	dh_installdirs -a
 
 	$(MAKE) -C $(BUILDDIR) install DESTDIR=$(CURDIR)/debian/tmp
+	perl -p -i -e "s,^dependency_libs=.*,dependency_libs=''," $(CURDIR)/debian/tmp/usr/lib/libapr-1.la
 
 binary-indep: build install
 

@@ -3,6 +3,8 @@ apr (1.4.2-7) UNRELEASED; urgency=low
   * Add a workaround for a problem related to strict aliasing that causes
     gcc 4.5 to create incorrect code in some cases. Closes: #609163
     LP: #697105
+  * Bump standards version to 3.9.1:
+    - empty dependency_libs section in libapr-1.la
 
  -- Stefan Fritsch <sf@debian.org>  Sat, 05 Feb 2011 17:54:35 +0100
 

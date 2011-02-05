@@ -1,0 +1,24 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 028_aliasing_gcc_4.5.dpatch
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Workaround for aliasing problem that causes gcc 4.5 to miscompile
+## DP: some brigade related code
+## DP: https://issues.apache.org/bugzilla/show_bug.cgi?id=50190
+## DP: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=609163
+## DP: https://bugs.launchpad.net/ubuntu/+source/apache2/+bug/697105
+@DPATCH@
+diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' '--exclude=.hg' '--exclude=_darcs' '--exclude=.bzr' trunk~/include/apr_ring.h trunk/include/apr_ring.h
+--- trunk~/include/apr_ring.h	2008-06-02 02:12:00.000000000 +0200
++++ trunk/include/apr_ring.h	2011-02-05 17:51:46.604001378 +0100
+@@ -90,8 +90,8 @@
+  */
+ #define APR_RING_HEAD(head, elem)					\
+     struct head {							\
+-	struct elem *next;						\
+-	struct elem *prev;						\
++	struct elem * volatile next;					\
++	struct elem * volatile prev;					\
+     }
+ 
+ /**

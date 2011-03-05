@@ -1,9 +1,9 @@
-apr (1.4.2-8) UNRELEASED; urgency=low
+apr (1.4.2-8) unstable; urgency=low
 
   * Fix apr_ino_t changing size depending on -D_FILE_OFFSET_BITS on
     kfreebsd-*. Closes: #616323
 
- -- Stefan Fritsch <sf@debian.org>  Sat, 05 Mar 2011 20:58:22 +0100
+ -- Stefan Fritsch <sf@debian.org>  Sat, 05 Mar 2011 21:14:02 +0100
 
 apr (1.4.2-7) unstable; urgency=low
 

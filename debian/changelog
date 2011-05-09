@@ -1,3 +1,10 @@
+apr (1.4.4-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Bump standards-version (no changes).
+
+ -- Stefan Fritsch <sf@debian.org>  Mon, 09 May 2011 23:10:39 +0200
+
 apr (1.4.2-8) unstable; urgency=low
 
   * Fix apr_ino_t changing size depending on -D_FILE_OFFSET_BITS on

@@ -5,6 +5,7 @@ apr (1.4.4-1) UNRELEASED; urgency=low
     Apache HTTPD's MaxMemFree directive actually work and hopefully reduces
     memory fragmentation.
   * Bump standards-version (no changes).
+  * Reword some short descriptions to make lintian happy.
 
  -- Stefan Fritsch <sf@debian.org>  Mon, 09 May 2011 23:10:39 +0200
 

@@ -13,7 +13,7 @@ Package: libapr1
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libapr1.0
-Description: The Apache Portable Runtime Library
+Description: Apache Portable Runtime Library
  APR is Apache's Portable Runtime Library, designed to be a support library 
  that provides a predictable and consistent interface to underlying 
  platform-specific implementations. 
@@ -24,7 +24,7 @@ Section: libdevel
 Depends: libapr1 (= ${binary:Version}), uuid-dev, ${misc:Depends}
 Suggests: python
 Conflicts: libapr1.0-dev, libapr0-dev
-Description: The Apache Portable Runtime Library - Development Headers
+Description: Apache Portable Runtime Library - Development Headers
  APR is Apache's Portable Runtime Library, designed to be a support library 
  that provides a predictable and consistent interface to underlying 
  platform-specific implementations. 
@@ -36,7 +36,7 @@ Architecture: any
 Section: debug
 Priority: extra
 Depends: libapr1 (= ${binary:Version}), ${misc:Depends}
-Description: The Apache Portable Runtime Library - Debugging Symbols
+Description: Apache Portable Runtime Library - Debugging Symbols
  APR is Apache's Portable Runtime Library, designed to be a support library 
  that provides a predictable and consistent interface to underlying 
  platform-specific implementations. 

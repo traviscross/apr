@@ -1,13 +1,14 @@
-apr (1.4.4-1) UNRELEASED; urgency=low
+apr (1.4.4-1) unstable; urgency=low
 
   * New upstream release.
+    - Fix potential DoS in apr_fnmatch (CVE-2011-0419)
   * Enable experimental allocator using mmap instead of malloc. This makes
     Apache HTTPD's MaxMemFree directive actually work and hopefully reduces
     memory fragmentation.
   * Bump standards-version (no changes).
   * Reword some short descriptions to make lintian happy.
 
- -- Stefan Fritsch <sf@debian.org>  Mon, 09 May 2011 23:10:39 +0200
+ -- Stefan Fritsch <sf@debian.org>  Thu, 12 May 2011 22:43:36 +0200
 
 apr (1.4.2-8) unstable; urgency=low
 

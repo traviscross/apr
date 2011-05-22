@@ -1,0 +1,20 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## by Lifeng Sun <lifongsun@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: fix allocator using mmap crashes on non-4k-page platforms
+## DP: #627532
+
+@DPATCH@
+diff --git a/memory/unix/apr_pools.c b/memory/unix/apr_pools.c
+--- a/memory/unix/apr_pools.c
++++ b/memory/unix/apr_pools.c
+@@ -47,7 +47,7 @@
+  * Magic numbers
+  */
+ 
+-#define MIN_ALLOC 8192
++#define MIN_ALLOC (2 * BOUNDARY_SIZE)
+ #define MAX_INDEX   20
+ 
+ #if APR_ALLOCATOR_USES_MMAP && defined(_SC_PAGESIZE)

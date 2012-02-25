@@ -1,3 +1,13 @@
+apr (1.4.6-1) UNRELEASED; urgency=low
+
+  * New upstream release:
+    - Adds randomization to hashes. CVE-2012-0840 (but not known to be
+      exploitable in httpd or svn). Closes: #655435
+  * Remove Tollef Fog Heen and Ryan Niebur from uploaders. Thanks for your
+    work in the past.
+
+ -- Stefan Fritsch <sf@debian.org>  Sat, 25 Feb 2012 22:36:52 +0100
+
 apr (1.4.5-1) unstable; urgency=high
 
   * New upstream version:

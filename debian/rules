@@ -30,9 +30,12 @@ CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no \
 	apr_cv_dup3=no \
 	apr_cv_accept4=no
 
-# apr_cv_mutex_robust_shared causes hangs in procmutex test on armel and alpha
+# apr_cv_mutex_robust_shared causes hangs in procmutex test on arm(el|hf) and alpha
 # let's just disable this for squeeze
 ifneq (,$(findstring armel,$(DEB_BUILD_ARCH)))
+  CONFFLAGS += apr_cv_mutex_robust_shared=no
+endif
+ifneq (,$(findstring armhf,$(DEB_BUILD_ARCH)))
   CONFFLAGS += apr_cv_mutex_robust_shared=no
 endif
 ifneq (,$(findstring alpha,$(DEB_BUILD_ARCH)))

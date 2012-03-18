@@ -1,4 +1,4 @@
-apr (1.4.6-1) UNRELEASED; urgency=low
+apr (1.4.6-1) unstable; urgency=low
 
   * New upstream release:
     - Fixes apr_file_trunc() bug which could lead to subversion repository
@@ -8,7 +8,7 @@ apr (1.4.6-1) UNRELEASED; urgency=low
   * Remove Tollef Fog Heen and Ryan Niebur from uploaders. Thanks for your
     work in the past.
 
- -- Stefan Fritsch <sf@debian.org>  Sat, 25 Feb 2012 22:36:52 +0100
+ -- Stefan Fritsch <sf@debian.org>  Sun, 18 Mar 2012 23:22:59 +0100
 
 apr (1.4.5-1.1) unstable; urgency=low
 

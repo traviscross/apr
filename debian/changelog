@@ -1,6 +1,8 @@
 apr (1.4.6-1) UNRELEASED; urgency=low
 
   * New upstream release:
+    - Fixes apr_file_trunc() bug which could lead to subversion repository
+      corruption. Closes: #664451
     - Adds randomization to hashes. CVE-2012-0840 (but not known to be
       exploitable in httpd or svn). Closes: #655435
   * Remove Tollef Fog Heen and Ryan Niebur from uploaders. Thanks for your

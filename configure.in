@@ -139,10 +139,14 @@ AC_CHECK_PROG(ASCPP, cpp, cpp)
 AC_CHECK_TOOL(AR, ar, ar)
 
 dnl Various OS checks that apparently set required flags
+ifdef([AC_USE_SYSTEM_EXTENSIONS], [
+AC_USE_SYSTEM_EXTENSIONS
+], [
 AC_AIX
-AC_ISC_POSIX
 AC_MINIX
+])
 
+AC_ISC_POSIX
 APR_EBCDIC
 
 dnl this is our library name
@@ -1341,6 +1345,20 @@ else
     socklen_t_value="int"
 fi
 
+APR_CHECK_SIZEOF_EXTENDED([#include <sys/types.h>], pid_t, 8)
+
+if test "$ac_cv_sizeof_pid_t" = "$ac_cv_sizeof_short"; then
+    pid_t_fmt='#define APR_PID_T_FMT "hd"'
+elif test "$ac_cv_sizeof_pid_t" = "$ac_cv_sizeof_int"; then
+    pid_t_fmt='#define APR_PID_T_FMT "d"'
+elif test "$ac_cv_sizeof_pid_t" = "$ac_cv_sizeof_long"; then
+    pid_t_fmt='#define APR_PID_T_FMT "ld"'
+elif test "$ac_cv_sizeof_pid_t" = "$ac_cv_sizeof_long_long"; then
+    pid_t_fmt='#define APR_PID_T_FMT APR_INT64_T_FMT'
+else
+    pid_t_fmt='#error Can not determine the proper size for pid_t'
+fi
+
 # Basically, we have tried to figure out the correct format strings
 # for APR types which vary between platforms, but we don't always get
 # it right.
@@ -1356,9 +1374,9 @@ case $host in
        ;;
    *-solaris*)
        if test "$ac_cv_sizeof_long" = "8"; then
-         pid_t_fmt="d"
+         pid_t_fmt='#define APR_PID_T_FMT "d"'
        else
-         pid_t_fmt="ld"
+         pid_t_fmt='#define APR_PID_T_FMT "ld"'
        fi
        ;;
    *aix4*|*aix5*)
@@ -1491,20 +1509,6 @@ if test "$ac_cv_sizeof_long" = "4"; then
                                ino_t_value="unsigned long")
 fi
 AC_MSG_NOTICE([using $ino_t_value for ino_t])
-
-APR_CHECK_SIZEOF_EXTENDED([#include <sys/types.h>], pid_t, 8)
-
-if test "$ac_cv_sizeof_pid_t" = "$ac_cv_sizeof_short"; then
-    pid_t_fmt='#define APR_PID_T_FMT "hd"'
-elif test "$ac_cv_sizeof_pid_t" = "$ac_cv_sizeof_int"; then
-    pid_t_fmt='#define APR_PID_T_FMT "d"'
-elif test "$ac_cv_sizeof_pid_t" = "$ac_cv_sizeof_long"; then
-    pid_t_fmt='#define APR_PID_T_FMT "ld"'
-elif test "$ac_cv_sizeof_pid_t" = "$ac_cv_sizeof_long_long"; then
-    pid_t_fmt='#define APR_PID_T_FMT APR_INT64_T_FMT'
-else
-    pid_t_fmt='#error Can not determine the proper size for pid_t'
-fi
 
 # Checks for endianness
 AC_C_BIGENDIAN
@@ -1881,6 +1885,70 @@ case $ac_decision in
         beossem="1"
         ;;
 esac
+
+if test $hasfcntlser = "1"; then
+AC_MSG_CHECKING(if fcntl returns EACCES when F_SETLK is already held)
+AC_TRY_RUN([
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
+#if defined(HAVE_UNISTD_H)
+#include <unistd.h>
+#endif
+#include <fcntl.h>
+#include <errno.h>
+
+int fd;
+struct flock proc_mutex_lock_it = {0};
+const char *fname = "conftest.fcntl";
+
+int main()
+{
+    int rc, status;;
+    proc_mutex_lock_it.l_whence = SEEK_SET;   /* from current point */
+    proc_mutex_lock_it.l_type = F_WRLCK;      /* set exclusive/write lock */
+
+    fd = creat(fname, S_IRWXU);
+    unlink(fname);
+
+    if (rc = lockit()) {
+        exit(-1);
+    }
+
+    if (fork()) {
+        wait(&status);
+    }
+    else {
+      return(lockit());
+    }
+
+    close(fd);
+    exit(WEXITSTATUS(status) != EACCES);
+}
+
+int lockit() {
+    int rc;
+    do {
+        rc = fcntl(fd, F_SETLK, &proc_mutex_lock_it);
+    } while ( rc < 0 && errno == EINTR);
+
+    return (rc < 0) ? errno : 0;
+}], [apr_fcntl_tryacquire_eacces=1], [apr_fcntl_tryacquire_eacces=0], [apr_fcntl_tryacquire_eacces=0])
+fi
+
+if test "$apr_fcntl_tryacquire_eacces" = "1"; then
+  AC_DEFINE(FCNTL_TRYACQUIRE_EACCES, 1, [Define if fcntl returns EACCES when F_SETLK is already held])
+fi
+
 
 AC_SUBST(hasflockser)
 AC_SUBST(hassysvser)

@@ -90,10 +90,13 @@ static APR_INLINE int fnmatch_ch(const char **pattern, const char **string, int 
         if (negate)
             ++*pattern;
 
+        /* ']' is an ordinary character at the start of the range pattern */
+        if (**pattern == ']')
+            goto leadingclosebrace;
+
         while (**pattern)
         {
-            /* ']' is an ordinary character at the start of the range pattern */
-            if ((**pattern == ']') && (*pattern > mismatch)) {
+            if (**pattern == ']') {
                 ++*pattern;
                 /* XXX: Fix for MBCS character width */
                 ++*string;
@@ -112,16 +115,22 @@ static APR_INLINE int fnmatch_ch(const char **pattern, const char **string, int 
             if (slash && (**pattern == '/'))
                 break;
 
-            /* Look at only well-formed range patterns; ']' is allowed only if escaped,
-             * while '/' is not allowed at all in FNM_PATHNAME mode.
+leadingclosebrace:
+            /* Look at only well-formed range patterns; 
+             * "x-]" is not allowed unless escaped ("x-\]")
+             * XXX: Fix for locale/MBCS character width
              */
-            /* XXX: Fix for locale/MBCS character width */
-            if (((*pattern)[1] == '-') && (*pattern)[2] 
-                    && ((escape && ((*pattern)[2] != '\\'))
-                          ? (((*pattern)[2] != ']') && (!slash || ((*pattern)[2] != '/')))
-                          : (((*pattern)[3]) && (!slash || ((*pattern)[3] != '/'))))) {
+            if (((*pattern)[1] == '-') && ((*pattern)[2] != ']'))
+            {
                 startch = *pattern;
                 *pattern += (escape && ((*pattern)[2] == '\\')) ? 3 : 2;
+
+                /* NOT a properly balanced [expr] pattern, EOS terminated 
+                 * or ranges containing a slash in FNM_PATHNAME mode pattern
+                 * fall out to to the rewind and test '[' literal code path
+                 */
+                if (!**pattern || (slash && (**pattern == '/')))
+                    break;
 
                 /* XXX: handle locale/MBCS comparison, advance by MBCS char width */
                 if ((**string >= *startch) && (**string <= **pattern))
@@ -146,7 +155,9 @@ static APR_INLINE int fnmatch_ch(const char **pattern, const char **string, int 
             ++*pattern;
         }
 
-        /* NOT a properly balanced [expr] pattern; Rewind to test '[' literal */
+        /* NOT a properly balanced [expr] pattern; Rewind
+         * and reset result to test '[' literal
+         */
         *pattern = mismatch;
         result = APR_FNM_NOMATCH;
     }
@@ -196,9 +207,13 @@ APR_DECLARE(int) apr_fnmatch(const char *pattern, const char *string, int flags)
     const char *mismatch = NULL;
     int matchlen = 0;
 
-    while (*pattern)
+    if (*pattern == '*')
+        goto firstsegment;
+
+    while (*pattern && *string)
     {
-        /* Match balanced slashes, starting a new segment pattern
+        /* Pre-decode "\/" which has no special significance, and
+         * match balanced slashes, starting a new segment pattern
          */
         if (slash && escape && (*pattern == '\\') && (pattern[1] == '/'))
             ++pattern;
@@ -207,6 +222,7 @@ APR_DECLARE(int) apr_fnmatch(const char *pattern, const char *string, int flags)
             ++string;
         }            
 
+firstsegment:
         /* At the beginning of each segment, validate leading period behavior.
          */
         if ((flags & APR_FNM_PERIOD) && (*string == '.'))
@@ -235,12 +251,17 @@ APR_DECLARE(int) apr_fnmatch(const char *pattern, const char *string, int flags)
 
         /* Allow pattern '*' to be consumed even with no remaining string to match
          */
-        while (*pattern && !(slash && ((*pattern == '/')
-                                       || (escape && (*pattern == '\\')
-                                                  && (pattern[1] == '/'))))
-                        && ((string < strendseg)
-                            || ((*pattern == '*') && (string == strendseg))))
+        while (*pattern)
         {
+            if ((string > strendseg)
+                || ((string == strendseg) && (*pattern != '*')))
+                break;
+
+            if (slash && ((*pattern == '/')
+                           || (escape && (*pattern == '\\')
+                                      && (pattern[1] == '/'))))
+                break;
+
             /* Reduce groups of '*' and '?' to n '?' matches
              * followed by one '*' test for simplicity
              */
@@ -324,9 +345,10 @@ APR_DECLARE(int) apr_fnmatch(const char *pattern, const char *string, int flags)
                 if (*pattern == '*')
                     break;
 
-                if (slash && ((*string == '/') || (*pattern == '/')
-                                               || (escape && (*pattern == '\\')
-                                                   && (pattern[1] == '/'))))
+                if (slash && ((*string == '/')
+                              || (*pattern == '/')
+                              || (escape && (*pattern == '\\')
+                                         && (pattern[1] == '/'))))
                     break;
 
                 /* Compare ch's (the pattern is advanced over "\/" to the '/',
@@ -352,18 +374,18 @@ APR_DECLARE(int) apr_fnmatch(const char *pattern, const char *string, int flags)
             }
         }
 
-        if (*string && (!slash || (*string != '/')))
+        if (*string && !(slash && (*string == '/')))
             return APR_FNM_NOMATCH;
 
-        if (*pattern && (!slash || ((*pattern != '/')
-                                    && (!escape || (*pattern != '\\')
-                                                || (pattern[1] != '/')))))
+        if (*pattern && !(slash && ((*pattern == '/')
+                                    || (escape && (*pattern == '\\')
+                                               && (pattern[1] == '/')))))
             return APR_FNM_NOMATCH;
     }
 
-    /* pattern is at EOS; if string is also, declare success
+    /* Where both pattern and string are at EOS, declare success
      */
-    if (!*string)
+    if (!*string && !*pattern)
         return 0;
 
     /* pattern didn't match to the end of string */

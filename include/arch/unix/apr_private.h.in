@@ -452,6 +452,36 @@
 /* Define if struct impreq was found */
 #undef HAVE_STRUCT_IPMREQ
 
+/* Define to 1 if `st_atimensec' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_ATIMENSEC
+
+/* Define to 1 if `st_atime_n' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_ATIME_N
+
+/* Define to 1 if `st_atim.tv_nsec' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_ATIM_TV_NSEC
+
+/* Define to 1 if `st_blocks' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_BLOCKS
+
+/* Define to 1 if `st_ctimensec' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_CTIMENSEC
+
+/* Define to 1 if `st_ctime_n' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_CTIME_N
+
+/* Define to 1 if `st_ctim.tv_nsec' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_CTIM_TV_NSEC
+
+/* Define to 1 if `st_mtimensec' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_MTIMENSEC
+
+/* Define to 1 if `st_mtime_n' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_MTIME_N
+
+/* Define to 1 if `st_mtim.tv_nsec' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC
+
 /* Define to 1 if `tm_gmtoff' is member of `struct tm'. */
 #undef HAVE_STRUCT_TM_TM_GMTOFF
 
@@ -478,6 +508,9 @@
 
 /* Define to 1 if you have the <sys/mutex.h> header file. */
 #undef HAVE_SYS_MUTEX_H
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
 
 /* Define to 1 if you have the <sys/poll.h> header file. */
 #undef HAVE_SYS_POLL_H
@@ -629,16 +662,16 @@
 /* */
 #undef SIGWAIT_TAKES_ONE_ARG
 
-/* The size of a `char', as computed by sizeof. */
+/* The size of `char', as computed by sizeof. */
 #undef SIZEOF_CHAR
 
-/* The size of a `int', as computed by sizeof. */
+/* The size of `int', as computed by sizeof. */
 #undef SIZEOF_INT
 
-/* The size of a `long', as computed by sizeof. */
+/* The size of `long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
-/* The size of a `long long', as computed by sizeof. */
+/* The size of `long long', as computed by sizeof. */
 #undef SIZEOF_LONG_LONG
 
 /* The size of off_t */
@@ -647,7 +680,7 @@
 /* The size of pid_t */
 #undef SIZEOF_PID_T
 
-/* The size of a `short', as computed by sizeof. */
+/* The size of `short', as computed by sizeof. */
 #undef SIZEOF_SHORT
 
 /* The size of size_t */
@@ -656,7 +689,7 @@
 /* The size of ssize_t */
 #undef SIZEOF_SSIZE_T
 
-/* The size of a `void*', as computed by sizeof. */
+/* The size of `void*', as computed by sizeof. */
 #undef SIZEOF_VOIDP
 
 /* Define to 1 if you have the ANSI C header files. */
@@ -749,13 +782,13 @@
 #undef inline
 #endif
 
-/* Define to `long' if <sys/types.h> does not define. */
+/* Define to `long int' if <sys/types.h> does not define. */
 #undef off_t
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
 
-/* Define to `unsigned' if <sys/types.h> does not define. */
+/* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
 
 /* Define to `int' if <sys/types.h> does not define. */

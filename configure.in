@@ -20,6 +20,10 @@ sinclude(build/apr_win32.m4)
 sinclude(build/apr_hints.m4)
 sinclude(build/libtool.m4)
 sinclude(build/ltsugar.m4)
+sinclude(build/argz.m4)
+sinclude(build/ltoptions.m4)
+sinclude(build/ltversion.m4)
+sinclude(build/lt~obsolete.m4)
 
 dnl Hard-coded inclusion at the tail end of apr_private.h:
 AH_BOTTOM([
@@ -1947,6 +1951,9 @@ fi
 
 if test "$apr_fcntl_tryacquire_eacces" = "1"; then
   AC_DEFINE(FCNTL_TRYACQUIRE_EACCES, 1, [Define if fcntl returns EACCES when F_SETLK is already held])
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
 fi
 
 

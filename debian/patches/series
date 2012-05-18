@@ -1,7 +1,6 @@
 fix_apr-config.patch
 ship_find_apr.m4.patch
 fix-apr.pc.patch
-sendfile_lfs.patch
 sendfile_hurd.patch
 hurd_path_max.patch
 fix_doxygen.patch

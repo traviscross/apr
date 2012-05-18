@@ -1,9 +1,0 @@
-011_fix_apr-config
-013_ship_find_apr.m4
-014_fix-apr.pc
-015_sendfile_lfs
-016_sendfile_hurd
-022_hurd_path_max.dpatch
-023_fix_doxygen.dpatch
-025_GNU_SOURCE_earlier.dpatch
-026_omit_extra_libs.dpatch

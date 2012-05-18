@@ -1,13 +1,13 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 023_fix_doxygen.dpatch by Stefan Fritsch <sf@debian.org>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Fix generation of docs for out-of-tree builds and newer doxygen versions
+From: Stefan Fritsch <sf@debian.org>
+Subject: Fix generation of docs for out-of-tree builds and newer doxygen versions
 
-@DPATCH@
-diff -urNad apr~/docs/doxygen.conf apr/docs/doxygen.conf
---- apr~/docs/doxygen.conf	2005-02-07 15:12:15.000000000 -0800
-+++ apr/docs/doxygen.conf	2008-06-27 20:11:39.000000000 -0700
+---
+ docs/doxygen.conf |    2 +-
+ include/apr.h.in  |   24 ++++++++++++------------
+ 2 files changed, 13 insertions(+), 13 deletions(-)
+
+--- a/docs/doxygen.conf
++++ b/docs/doxygen.conf
 @@ -1,6 +1,6 @@
  PROJECT_NAME="Apache Portable Runtime"
  
@@ -16,10 +16,9 @@ diff -urNad apr~/docs/doxygen.conf apr/docs/doxygen.conf
  QUIET=YES
  RECURSIVE=YES
  FILE_PATTERNS=*.h
-diff -urNad apr~/include/apr.h.in apr/include/apr.h.in
---- apr~/include/apr.h.in	2008-05-29 08:47:52.000000000 -0700
-+++ apr/include/apr.h.in	2008-06-27 20:17:17.000000000 -0700
-@@ -374,11 +374,11 @@
+--- a/include/apr.h.in
++++ b/include/apr.h.in
+@@ -445,11 +445,11 @@
  /** 
   * Thread callbacks from APR functions must be declared with APR_THREAD_FUNC, 
   * so that they follow the platform's calling convention.
@@ -33,9 +32,9 @@ diff -urNad apr~/include/apr.h.in apr/include/apr.h.in
 - * </PRE>
 + * @endcode
   */
- #define APR_THREAD_FUNC
+ #define APR_THREAD_FUNC       @apr_thread_func@
  
-@@ -410,11 +410,11 @@
+@@ -481,11 +481,11 @@
   * APR_DECLARE_NONSTD(), as they must follow the C language calling convention.
   * @see APR_DECLARE @see APR_DECLARE_DATA
   * @remark Both the declaration and implementations must use the same macro.
@@ -51,7 +50,7 @@ diff -urNad apr~/include/apr.h.in apr/include/apr.h.in
   */
  #define APR_DECLARE_NONSTD(type)     type
  
-@@ -425,12 +425,12 @@
+@@ -496,12 +496,12 @@
   * @remark Note that the declaration and implementations use different forms,
   * but both must include the macro.
   * 

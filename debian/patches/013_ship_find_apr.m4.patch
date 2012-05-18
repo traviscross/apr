@@ -1,14 +1,13 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 013_ship_find_apr.m4.dpatch by Tollef Fog Heen <tfheen@err.no>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Install a set of random build files too
+From: Tollef Fog Heen <tfheen@err.no>
+Subject: Install a set of random build files too
 
-@DPATCH@
-diff -urNad apr1.0-1.2.2~/Makefile.in apr1.0-1.2.2/Makefile.in
---- apr1.0-1.2.2~/Makefile.in	2005-02-04 12:55:44.000000000 +0100
-+++ apr1.0-1.2.2/Makefile.in	2006-01-26 20:19:44.000000000 +0100
-@@ -85,6 +85,15 @@
+---
+ Makefile.in |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -87,6 +87,15 @@
  	done
  	$(INSTALL_DATA) build/apr_rules.out $(DESTDIR)$(installbuilddir)/apr_rules.mk
  	$(INSTALL) -m 755 apr-config.out $(DESTDIR)$(bindir)/$(APR_CONFIG)

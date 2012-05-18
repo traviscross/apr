@@ -3,9 +3,6 @@
 # Turn on VERBOSE output
 #export DH_VERBOSE=1
 
-#enable dpatch
-include /usr/share/dpatch/dpatch.make
-
 # These are used for cross-compiling and for saving the configure script
 # # from having to guess our platform (since we know it already)
 DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
@@ -76,7 +73,7 @@ endif
 
 SHELL=/bin/bash
 
-$(BUILDDIR)/config.status: patch-stamp
+$(BUILDDIR)/config.status:
 	dh_testdir
 	mkdir -p $(BUILDDIR)/docs
 	./buildconf
@@ -108,7 +105,7 @@ ifeq (linux, $(DEB_BUILD_ARCH_OS))
 	fi
 endif
 
-build: patch-stamp build-stamp
+build: build-stamp
 
 build-stamp: $(BUILDDIR)/config.status
 	dh_testdir
@@ -118,7 +115,7 @@ build-stamp: $(BUILDDIR)/config.status
 
 	touch $@
 
-clean: unpatch
+clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp test-stamp debian/ino_t_test

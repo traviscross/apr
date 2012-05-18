@@ -1,14 +1,13 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 011_fix_apr-config.dpatch by  <tfheen@debian.org>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: No description.
+From: <tfheen@debian.org>
+Subject: No description.
 
-@DPATCH@
-Index: apr-config.in
+---
+ apr-config.in |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
 --- a/apr-config.in
 +++ b/apr-config.in
-@@ -38,7 +38,7 @@
+@@ -39,7 +39,7 @@
  LIBS="@EXTRA_LIBS@"
  EXTRA_INCLUDES="@EXTRA_INCLUDES@"
  SHLIBPATH_VAR="@shlibpath_var@"
@@ -17,7 +16,7 @@ Index: apr-config.in
  APR_BUILD_DIR="@apr_builddir@"
  APR_SO_EXT="@so_ext@"
  APR_LIB_TARGET="@export_lib_target@"
-@@ -222,11 +222,7 @@
+@@ -223,11 +223,7 @@
      exit 0
      ;;
      --apr-libtool)

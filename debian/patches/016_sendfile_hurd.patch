@@ -1,14 +1,13 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 016_sendfile_hurd.dpatch by  <tfheen@debian.org>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: No description.
+From: <tfheen@debian.org>
+Subject: No description.
 
-@DPATCH@
-Index: network_io/unix/sendrecv.c
+---
+ network_io/unix/sendrecv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 --- a/network_io/unix/sendrecv.c
 +++ b/network_io/unix/sendrecv.c
-@@ -238,7 +238,7 @@
+@@ -245,7 +245,7 @@
  /* Define a structure to pass in when we have a NULL header value */
  static apr_hdtr_t no_hdtr;
  

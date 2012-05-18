@@ -1,0 +1,18 @@
+From: <tfheen@debian.org>
+Subject: No description.
+
+---
+ apr.pc.in |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/apr.pc.in
++++ b/apr.pc.in
+@@ -7,5 +7,6 @@
+ Name: APR
+ Description: The Apache Portable Runtime library
+ Version: @APR_DOTTED_VERSION@
+-Libs: -L${libdir} -l@APR_LIBNAME@ @EXTRA_LIBS@
+-Cflags: @EXTRA_CPPFLAGS@ @EXTRA_CFLAGS@ -I${includedir}
++Libs: -L${libdir} -l@APR_LIBNAME@
++Libs.private: @EXTRA_LIBS@
++Cflags: @EXTRA_CPPFLAGS@ -I${includedir}

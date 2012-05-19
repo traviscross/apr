@@ -18,14 +18,7 @@ CFLAGS := $(CFLAGS) -pipe -Wall -g
 H_CFLAGS := -Wformat -Wformat-security -D_FORTIFY_SOURCE=2 -fstack-protector
 H_LDFLAGS := -Wl,-z,relro
 
-# API to min kernel map: 
-# 2.6.27: dup3, SOCK_CLOEXEC, epoll_create1
-# 2.6.28: accept4
-CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no \
-	apr_cv_sock_cloexec=no \
-	apr_cv_epoll_create1=no \
-	apr_cv_dup3=no \
-	apr_cv_accept4=no
+CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no
 
 # apr_cv_mutex_robust_shared causes hangs in procmutex test on arm(el|hf) and alpha
 # let's just disable this for squeeze

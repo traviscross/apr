@@ -1,5 +1,7 @@
 apr (1.4.6-2) UNRELEASED; urgency=low
 
+  * Enable use of some new APIs. The minimal required linux kernel version is
+    now 2.6.28.
   * Improvements for Hurd (closes: #656880):
     - Re-enable test suite
     - Update build hints, disable non-working shm and flock methods. Thanks to

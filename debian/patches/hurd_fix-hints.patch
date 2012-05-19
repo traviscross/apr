@@ -1,0 +1,36 @@
+From: Pino Toscano <pino@debian.org>
+Bug: #656880
+# * hurd_fix-hints.diff
+# This patch, which could be sent upstream, fixes the set of predefined
+# hints for Hurd: usually the $host string is "i686-unknown-gnu0.3" or
+# "i486-pc-gnu", so the "GNU" string won't match anywhere; furthermore,
+# since the proposed string could be too broad (potentially matching
+# also the kFreeBSD string, e.g. "i686-unknown-kfreebsd8.2-gnu"), it has
+# been moved as very last check.
+#
+# committed upstream for 1.4.7
+
+Index: apr/build/apr_hints.m4
+===================================================================
+--- apr.orig/build/apr_hints.m4
++++ apr/build/apr_hints.m4
+@@ -129,9 +129,6 @@
+         esac
+ 	APR_ADDTO(CPPFLAGS, [-D_REENTRANT -D_GNU_SOURCE])
+ 	;;
+-    *-GNU*)
+-	APR_ADDTO(CPPFLAGS, [-DHURD -D_GNU_SOURCE])
+-	;;
+     *-lynx-lynxos)
+ 	APR_ADDTO(CPPFLAGS, [-D__NO_INCLUDE_WARN__ -DLYNXOS])
+ 	APR_ADDTO(LIBS, [-lbsd])
+@@ -479,6 +476,9 @@
+                 ;;
+         esac
+         ;;
++    *-*-gnu*)
++	APR_ADDTO(CPPFLAGS, [-D_REENTRANT -D_GNU_SOURCE])
++	;;
+   esac
+ 
+ fi

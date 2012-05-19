@@ -1,5 +1,9 @@
 apr (1.4.6-2) UNRELEASED; urgency=low
 
+  * Improvements for Hurd (closes: #656880):
+    - Re-enable test suite
+    - Update build hints, disable non-working shm and flock methods. Thanks to
+      Pino Toscano for the patches.
   * Switch VCS to git.
   * Switch to source format 3.0, debhelper 9. Thanks to Jari Aalto for the
     patch. Closes: #664299

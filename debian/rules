@@ -66,11 +66,6 @@ else
 	TEST_TARGET =
 endif
 
-# disable tests on hurd until they are fixed (#530286)
-ifeq (hurd, $(DEB_BUILD_ARCH_OS))
-	TEST_TARGET =
-endif
-
 SHELL=/bin/bash
 
 $(BUILDDIR)/config.status:

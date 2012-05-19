@@ -6,3 +6,5 @@ hurd_path_max.patch
 fix_doxygen.patch
 GNU_SOURCE_earlier.patch
 omit_extra_libs.patch
+hurd_shm_flock.patch
+hurd_fix-hints.patch

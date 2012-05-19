@@ -5,8 +5,10 @@ Subject: No description.
  apr-config.in |    8 ++------
  1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/apr-config.in
-+++ b/apr-config.in
+Index: apr/apr-config.in
+===================================================================
+--- apr.orig/apr-config.in
++++ apr/apr-config.in
 @@ -39,7 +39,7 @@
  LIBS="@EXTRA_LIBS@"
  EXTRA_INCLUDES="@EXTRA_INCLUDES@"

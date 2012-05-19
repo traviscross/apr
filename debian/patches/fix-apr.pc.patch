@@ -5,8 +5,10 @@ Subject: No description.
  apr.pc.in |    5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/apr.pc.in
-+++ b/apr.pc.in
+Index: apr/apr.pc.in
+===================================================================
+--- apr.orig/apr.pc.in
++++ apr/apr.pc.in
 @@ -7,5 +7,6 @@
  Name: APR
  Description: The Apache Portable Runtime library

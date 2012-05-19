@@ -6,8 +6,10 @@ Subject: Fix generation of docs for out-of-tree builds and newer doxygen version
  include/apr.h.in  |   24 ++++++++++++------------
  2 files changed, 13 insertions(+), 13 deletions(-)
 
---- a/docs/doxygen.conf
-+++ b/docs/doxygen.conf
+Index: apr/docs/doxygen.conf
+===================================================================
+--- apr.orig/docs/doxygen.conf
++++ apr/docs/doxygen.conf
 @@ -1,6 +1,6 @@
  PROJECT_NAME="Apache Portable Runtime"
  
@@ -16,8 +18,10 @@ Subject: Fix generation of docs for out-of-tree builds and newer doxygen version
  QUIET=YES
  RECURSIVE=YES
  FILE_PATTERNS=*.h
---- a/include/apr.h.in
-+++ b/include/apr.h.in
+Index: apr/include/apr.h.in
+===================================================================
+--- apr.orig/include/apr.h.in
++++ apr/include/apr.h.in
 @@ -445,11 +445,11 @@
  /** 
   * Thread callbacks from APR functions must be declared with APR_THREAD_FUNC, 

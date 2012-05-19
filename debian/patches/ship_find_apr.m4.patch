@@ -5,9 +5,11 @@ Subject: Install a set of random build files too
  Makefile.in |    9 +++++++++
  1 file changed, 9 insertions(+)
 
---- a/Makefile.in
-+++ b/Makefile.in
-@@ -87,6 +87,15 @@
+Index: apr/Makefile.in
+===================================================================
+--- apr.orig/Makefile.in
++++ apr/Makefile.in
+@@ -90,6 +90,15 @@
  	done
  	$(INSTALL_DATA) build/apr_rules.out $(DESTDIR)$(installbuilddir)/apr_rules.mk
  	$(INSTALL) -m 755 apr-config.out $(DESTDIR)$(bindir)/$(APR_CONFIG)

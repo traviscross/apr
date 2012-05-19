@@ -5,8 +5,10 @@ Subject: #349418
  include/apr.h.in |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/include/apr.h.in
-+++ b/include/apr.h.in
+Index: apr/include/apr.h.in
+===================================================================
+--- apr.orig/include/apr.h.in
++++ apr/include/apr.h.in
 @@ -594,7 +594,8 @@
  #elif defined(_POSIX_PATH_MAX)
  #define APR_PATH_MAX       _POSIX_PATH_MAX

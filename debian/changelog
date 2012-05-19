@@ -10,6 +10,7 @@ apr (1.4.6-2) UNRELEASED; urgency=low
   * Switch to source format 3.0, debhelper 9. Thanks to Jari Aalto for the
     patch. Closes: #664299
   * Remove sendfile LFS patch that was only necessary for 2.4 kernels.
+  * Fix some lintian warnings (dh_prep, build-indep/build-arch targets).
   * Bump Standards-Version (no changes).
 
  -- Stefan Fritsch <sf@debian.org>  Sun, 18 Mar 2012 23:35:00 +0100

@@ -1,4 +1,4 @@
-apr (1.4.6-2) UNRELEASED; urgency=low
+apr (1.4.6-2) unstable; urgency=low
 
   * Enable use of some new APIs. The minimal required linux kernel version is
     now 2.6.28.
@@ -13,7 +13,7 @@ apr (1.4.6-2) UNRELEASED; urgency=low
   * Fix some lintian warnings (dh_prep, build-indep/build-arch targets).
   * Bump Standards-Version (no changes).
 
- -- Stefan Fritsch <sf@debian.org>  Sun, 18 Mar 2012 23:35:00 +0100
+ -- Stefan Fritsch <sf@debian.org>  Sun, 20 May 2012 21:39:17 +0200
 
 apr (1.4.6-1) unstable; urgency=low
 

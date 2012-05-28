@@ -1,3 +1,9 @@
+apr (1.4.6-3) UNRELEASED; urgency=low
+
+  * Add some debug output in order to debug test failures on kfreebsd-i386.
+
+ -- Stefan Fritsch <sf@debian.org>  Mon, 28 May 2012 13:10:04 +0200
+
 apr (1.4.6-2) unstable; urgency=low
 
   * Enable use of some new APIs. The minimal required linux kernel version is

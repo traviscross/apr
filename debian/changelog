@@ -1,5 +1,10 @@
 apr (1.4.6-3) UNRELEASED; urgency=low
 
+  * Fix some issues with resolving loopback addresses of a protocol family
+    that is not otherwise configured on a host. Many thanks to Jean-Michel
+    Vourgère and Aurelien Jarno for debugging this.
+    Closes: #500558, #629899 LP: #397393
+  * Pull updates from upstream branch 1.4.x up to r1343251
   * Add some debug output in order to debug test failures on kfreebsd-i386.
 
  -- Stefan Fritsch <sf@debian.org>  Mon, 28 May 2012 13:10:04 +0200

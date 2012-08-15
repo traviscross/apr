@@ -1,3 +1,9 @@
+apr (1.4.6-4) UNRELEASED; urgency=low
+
+  * Make the /dev/shm sanity check during build work if it is a symbolic link.
+
+ -- Stefan Fritsch <sf@debian.org>  Wed, 15 Aug 2012 19:58:25 +0200
+
 apr (1.4.6-3) unstable; urgency=low
 
   * Fix some issues with resolving loopback addresses of a protocol family

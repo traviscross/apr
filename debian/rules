@@ -82,7 +82,7 @@ ifeq (linux, $(DEB_BUILD_ARCH_OS))
 	if grep -q APR_HAS_POSIXSEM_SERIALIZE.*0 $(BUILDDIR)/include/apr.h ;\
 	then \
 		echo "WARNING: This is Linux but configure did not detect POSIX semaphores." ;\
-		if [ "$(stat -c '%d' /dev/shm)" = "$(stat -c '%d' /dev)" ] ;\
+		if ! df /dev/shm/.|grep -q ^tmpfs ;\
 		then \
 			echo "ERROR: POSIX semaphores not usable and /dev/shm not mounted." ;\
 			echo "ERROR: Aborting." ;\

@@ -1,6 +1,8 @@
 apr (1.4.6-4) UNRELEASED; urgency=low
 
   * Make the /dev/shm sanity check during build work if it is a symbolic link.
+  * Remove the ancient ino_t configure sanity test that causes a FTBFS on x32.
+    Closes: #701193
 
  -- Stefan Fritsch <sf@debian.org>  Wed, 15 Aug 2012 19:58:25 +0200
 

@@ -69,11 +69,6 @@ $(BUILDDIR)/config.status:
 	# /bin/sh -> /bin/bash, the resulting libtool will not work on systems
 	# where /bin/sh -> /bin/dash
 	cd $(BUILDDIR) && CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" $(CONFFLAGS) CONFIG_SHELL=/bin/bash /bin/bash ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics --enable-allocator-uses-mmap
-	# Determine whether upstream's configure gives the same definition of apr_ino_t as we had until 1.2.11-1
-	rm -f debian/ino_t_test
-	gcc -I$(CURDIR)/include -I$(BUILDDIR)/include `$(BUILDDIR)/apr-1-config --cppflags` -o debian/ino_t_test debian/ino_t_test.c
-	debian/ino_t_test
-	rm -f debian/ino_t_test
 ifeq (hurd, $(DEB_BUILD_ARCH_OS))
 	# multicast not supported on Hurd
 	sed -i '/HAVE_STRUCT_IPMREQ/ d' $(BUILDDIR)/include/arch/unix/apr_private.h
@@ -108,7 +103,7 @@ build-stamp: $(BUILDDIR)/config.status
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp test-stamp debian/ino_t_test
+	rm -f build-stamp test-stamp
 	rm -f configure build/lt* build/libtool.m4 build-outputs.mk include/arch/unix/apr_private.h.in
 	rm -rf $(BUILDDIR)
 

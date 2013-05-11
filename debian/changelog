@@ -1,4 +1,4 @@
-apr (1.4.6-4) UNRELEASED; urgency=low
+apr (1.4.6-4) unstable; urgency=low
 
   * Make the /dev/shm sanity check during build work if it is a symbolic link.
   * Remove the ancient ino_t configure sanity test that causes a FTBFS on x32.
@@ -6,7 +6,7 @@ apr (1.4.6-4) UNRELEASED; urgency=low
   * Don't override CFLAGS and LDFLAGS during build. This fixes the debug
     information being useless. Closes: #703466
 
- -- Stefan Fritsch <sf@debian.org>  Wed, 15 Aug 2012 19:58:25 +0200
+ -- Stefan Fritsch <sf@debian.org>  Sat, 11 May 2013 15:06:24 +0200
 
 apr (1.4.6-3) unstable; urgency=low
 

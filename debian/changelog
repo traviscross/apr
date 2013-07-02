@@ -1,3 +1,9 @@
+apr (1.4.8-1) UNRELEASED; urgency=low
+
+  * New upstream release
+
+ -- Stefan Fritsch <sf@debian.org>  Tue, 02 Jul 2013 21:55:04 +0200
+
 apr (1.4.6-4) unstable; urgency=low
 
   * Make the /dev/shm sanity check during build work if it is a symbolic link.

@@ -5,18 +5,6 @@ libapr-1.so.0 libapr1 #MINVER#
  apr__SHA256_Init@Base 1.2.7
  apr__SHA256_Transform@Base 1.2.7
  apr__SHA256_Update@Base 1.2.7
- apr__SHA384_Data@Base 1.2.7
- apr__SHA384_End@Base 1.2.7
- apr__SHA384_Final@Base 1.2.7
- apr__SHA384_Init@Base 1.2.7
- apr__SHA384_Update@Base 1.2.7
- apr__SHA512_Data@Base 1.2.7
- apr__SHA512_End@Base 1.2.7
- apr__SHA512_Final@Base 1.2.7
- apr__SHA512_Init@Base 1.2.7
- apr__SHA512_Last@Base 1.2.7
- apr__SHA512_Transform@Base 1.2.7
- apr__SHA512_Update@Base 1.2.7
  apr_allocator_alloc@Base 1.2.7
  apr_allocator_create@Base 1.2.7
  apr_allocator_destroy@Base 1.2.7

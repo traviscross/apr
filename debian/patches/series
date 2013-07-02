@@ -5,4 +5,3 @@ hurd_path_max.patch
 fix_doxygen.patch
 omit_extra_libs.patch
 hurd_shm_flock.patch
-debug-kfreebsd-issues.patch

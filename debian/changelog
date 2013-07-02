@@ -1,6 +1,8 @@
 apr (1.4.8-1) UNRELEASED; urgency=low
 
   * New upstream release
+  * Remove the test debug output added in 1.4.6-3. The bug was #673711 in
+    eglibc and has been fixed some time ago.
 
  -- Stefan Fritsch <sf@debian.org>  Tue, 02 Jul 2013 21:55:04 +0200
 

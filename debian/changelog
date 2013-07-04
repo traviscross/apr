@@ -1,10 +1,10 @@
-apr (1.4.8-1) UNRELEASED; urgency=low
+apr (1.4.8-1) unstable; urgency=low
 
   * New upstream release
   * Remove the test debug output added in 1.4.6-3. The bug was #673711 in
     eglibc and has been fixed some time ago.
 
- -- Stefan Fritsch <sf@debian.org>  Tue, 02 Jul 2013 21:55:04 +0200
+ -- Stefan Fritsch <sf@debian.org>  Thu, 04 Jul 2013 23:25:10 +0200
 
 apr (1.4.6-4) unstable; urgency=low
 

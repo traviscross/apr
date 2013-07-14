@@ -5,12 +5,13 @@
 
 # These are used for cross-compiling and for saving the configure script
 # # from having to guess our platform (since we know it already)
-DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-DEB_BUILD_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
-DEB_BUILD_ARCH       ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
-DEB_BUILD_ARCH_OS    ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH_OS)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_HOST_ARCH       ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+DEB_HOST_ARCH_OS    ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
+DEB_HOST_ARCH_BITS  ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_BITS)
 
-BUILDDIR := build-$(DEB_BUILD_ARCH)
+BUILDDIR := build-$(DEB_HOST_ARCH)
 
 CFLAGS := $(CFLAGS) -pipe -Wall -g
 
@@ -19,21 +20,36 @@ H_CFLAGS := -Wformat -Wformat-security -D_FORTIFY_SOURCE=2 -fstack-protector
 H_LDFLAGS := -Wl,-z,relro
 
 CONFFLAGS += ac_cv_prog_AWK=mawk apr_cv_sctp=no
+ifneq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
+  ifeq ($(DEB_HOST_ARCH_OS),linux)
+    CONFFLAGS += ac_cv_file__dev_zero=yes \
+                 ac_cv_func_setpgrp_void=yes \
+                 apr_cv_epoll=yes \
+                 ac_cv_struct_rlimit=yes \
+                 apr_cv_tcp_nodelay_with_cork=yes \
+                 apr_cv_process_shared_works=yes
+  endif
+  ifeq ($(DEB_HOST_ARCH_BITS),32)
+    CONFFLAGS += ac_cv_sizeof_struct_iovec=8
+  else ifeq ($(DEB_HOST_ARCH_BITS),64)
+    CONFFLAGS += ac_cv_sizeof_struct_iovec=16
+  endif
+endif
 
 # apr_cv_mutex_robust_shared causes hangs in procmutex test on arm(el|hf) and alpha
 # let's just disable this for squeeze
-ifneq (,$(findstring armel,$(DEB_BUILD_ARCH)))
+ifneq (,$(findstring armel,$(DEB_HOST_ARCH)))
   CONFFLAGS += apr_cv_mutex_robust_shared=no
 endif
-ifneq (,$(findstring armhf,$(DEB_BUILD_ARCH)))
+ifneq (,$(findstring armhf,$(DEB_HOST_ARCH)))
   CONFFLAGS += apr_cv_mutex_robust_shared=no
 endif
-ifneq (,$(findstring alpha,$(DEB_BUILD_ARCH)))
+ifneq (,$(findstring alpha,$(DEB_HOST_ARCH)))
   CONFFLAGS += apr_cv_mutex_robust_shared=no
 endif
 
 # SH4 cannot use proc_pthread.
-ifneq (,$(findstring sh4,$(DEB_BUILD_ARCH)))
+ifneq (,$(findstring sh4,$(DEB_HOST_ARCH)))
   CONFFLAGS += apr_cv_hasprocpthreadser=no ac_cv_define_PTHREAD_PROCESS_SHARED=no
 endif
 
@@ -69,11 +85,11 @@ $(BUILDDIR)/config.status:
 	# /bin/sh -> /bin/bash, the resulting libtool will not work on systems
 	# where /bin/sh -> /bin/dash
 	cd $(BUILDDIR) && $(CONFFLAGS) CONFIG_SHELL=/bin/bash /bin/bash ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --enable-layout=Debian --includedir=\$${prefix}/usr/include/apr-1.0 --with-installbuilddir=\$${prefix}/usr/share/apr-1.0/build  --enable-nonportable-atomics --enable-allocator-uses-mmap
-ifeq (hurd, $(DEB_BUILD_ARCH_OS))
+ifeq (hurd, $(DEB_HOST_ARCH_OS))
 	# multicast not supported on Hurd
 	sed -i '/HAVE_STRUCT_IPMREQ/ d' $(BUILDDIR)/include/arch/unix/apr_private.h
 endif
-ifeq (linux, $(DEB_BUILD_ARCH_OS))
+ifeq (linux, $(DEB_HOST_ARCH_OS))
 	if grep -q APR_HAS_POSIXSEM_SERIALIZE.*0 $(BUILDDIR)/include/apr.h ;\
 	then \
 		echo "WARNING: This is Linux but configure did not detect POSIX semaphores." ;\
@@ -149,7 +165,7 @@ binary-arch: build install
 	dh_lintian
 	dh_compress
 	dh_fixperms
-	dh_makeshlibs -- -Idebian/symbols.$(DEB_BUILD_ARCH_OS)
+	dh_makeshlibs -- -Idebian/symbols.$(DEB_HOST_ARCH_OS)
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol

@@ -1,0 +1,36 @@
+commit 7e5dff8f2e1d38e5a93b18eda854356f194fcff8 (origin/1.4.x)
+Author: Rainer Jung <rjung@apache.org>
+Date:   Sat Jul 13 15:54:54 2013 +0000
+
+    Fix broken test for O_NONBLOCK inheritance.
+    
+    Followup to r1449570 resp. r1449569 (1.5.x)
+    resp. r1449568 (trunk) which miss the variable
+    declaration.
+    
+    Backport of r1502804 from trunk resp. r1502805
+    (1.5.x).
+    
+Index: apr/build/apr_network.m4
+===================================================================
+--- apr.orig/build/apr_network.m4
++++ apr/build/apr_network.m4
+@@ -570,6 +570,9 @@
+ #ifdef HAVE_SYS_SOCKET_H
+ #include <sys/socket.h>
+ #endif
++#ifdef HAVE_SYS_TIME_H
++#include <sys/time.h>
++#endif
+ #ifdef HAVE_SYS_SELECT_H
+ #include <sys/select.h>
+ #endif
+@@ -590,6 +593,8 @@
+     int listen_port, rc;
+     struct sockaddr_in sa;
+     socklen_t sa_len;
++    fd_set fds;
++    struct timeval tv;
+ 
+     listen_s = socket(AF_INET, SOCK_STREAM, 0);
+     if (listen_s < 0) {

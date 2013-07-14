@@ -4,8 +4,10 @@ apr (1.4.8-2) UNRELEASED; urgency=low
     - Fix the confusion between HOST and BUILD variables in rules.
     - Add a set of autoconf preseeds that are only used when cross-building.
   * Change cross-building preseeds to only apply on linux.
+  * Cherry-pick fix for O_NONBLOCK configure check from upstream 1.4.x
+    branch.
 
- -- Stefan Fritsch <sf@debian.org>  Sun, 14 Jul 2013 23:15:36 +0200
+ -- Stefan Fritsch <sf@debian.org>  Sun, 14 Jul 2013 23:25:55 +0200
 
 apr (1.4.8-1) unstable; urgency=low
 

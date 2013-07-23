@@ -345,7 +345,7 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_socket_bind@Base 1.2.7
  apr_socket_close@Base 1.2.7
  apr_socket_connect@Base 1.2.7
- apr_socket_create@Base 1.2.7
+ apr_socket_create@Base 1.4.8-2~
  apr_socket_data_get@Base 1.2.7
  apr_socket_data_set@Base 1.2.7
  apr_socket_inherit_set@Base 1.2.7

@@ -6,6 +6,16 @@ apr (1.4.8-2) UNRELEASED; urgency=low
   * Change cross-building preseeds to only apply on linux.
   * Cherry-pick fix for O_NONBLOCK configure check from upstream 1.4.x
     branch.
+  * Switch build system to dh
+    - No longer hard-codes -fstack-protector on unsupported platforms.
+      Closes: #717231
+    - Bump Standards-Version (no additional changes).
+  * Support multi-arch.
+  * Depend on libtool instead of shipping a copy in libapr1-dev.
+    Closes: #489625
+  * Enable sctp support on Linux.
+  * Change apr_rules.mk to not force CFLAGS, etc. to the values used during
+    apr's compilation.
 
  -- Stefan Fritsch <sf@debian.org>  Sun, 14 Jul 2013 23:25:55 +0200
 

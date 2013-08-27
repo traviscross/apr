@@ -33,6 +33,10 @@ static apr_status_t socket_cleanup(void *sock)
     apr_socket_t *thesocket = sock;
     int sd = thesocket->socketdes;
 
+    if (thesocket->socketdes == -1) {
+        return APR_SUCCESS;
+    }
+
     /* Set socket descriptor to -1 before close(), so that there is no
      * chance of returning an already closed FD from apr_os_sock_get().
      */

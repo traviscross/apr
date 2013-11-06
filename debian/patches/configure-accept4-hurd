@@ -2,10 +2,11 @@
 # 
 # http://svn.apache.org/viewvc?view=revision&revision=r832904
 # http://svn.apache.org/viewvc?view=revision&revision=r1539374
+# http://svn.apache.org/viewvc?view=revision&revision=r1539389
 Index: apr/configure.in
 ===================================================================
---- apr.orig/configure.in	2013-11-06 17:00:59.854003705 +0100
-+++ apr/configure.in	2013-11-06 17:01:26.606002611 +0100
+--- apr.orig/configure.in
++++ apr/configure.in
 @@ -872,78 +872,47 @@
     AC_DEFINE([HAVE_DUP3], 1, [Define if dup3 function is supported])
  fi
@@ -92,9 +93,9 @@ Index: apr/configure.in
 -                      sizeof(struct sockaddr_un)) == -1 &&
 -              (errno==ENOENT || errno==ECONNREFUSED))
 -            ;
-+    if (fcntl(fd, F_GETFL, &flags) == -1 ||
-+        fcntl(fd, F_SETFL, flags|O_NONBLOCK) == -1)
-+        return 1;
++    flags = fcntl(fd, F_GETFL);
++    if (flags == -1 || fcntl(fd, F_SETFL, flags|O_NONBLOCK) == -1)
++        return 5;
 +
 +    memset(&sin, 0, sizeof sin);
 +    sin.sin_family = AF_INET;

@@ -14,7 +14,7 @@ Index: apr/docs/doxygen.conf
  PROJECT_NAME="Apache Portable Runtime"
  
 -INPUT=.
-+INPUT=../include include
++INPUT=../../include include
  QUIET=YES
  RECURSIVE=YES
  FILE_PATTERNS=*.h

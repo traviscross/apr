@@ -16,6 +16,7 @@ apr (1.4.8-2) UNRELEASED; urgency=low
   * Enable sctp support on Linux.
   * Change apr_rules.mk to not force CFLAGS, etc. to the values used during
     apr's compilation.
+  * Fix accept4() configure test to work on Hurd. Closes: #715028
 
  -- Stefan Fritsch <sf@debian.org>  Sun, 14 Jul 2013 23:25:55 +0200
 

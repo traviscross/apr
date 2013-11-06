@@ -3,13 +3,5 @@ usr/lib/*/libapr*a
 usr/lib/*/libapr-1.so
 usr/lib/*/pkgconfig
 usr/bin
-usr/share/apr-1.0/build/apr_common.m4
-usr/share/apr-1.0/build/apr_rules.mk
-usr/share/apr-1.0/build/find_apr.m4
-usr/share/apr-1.0/build/gen-build.py
-usr/share/apr-1.0/build/get-version.sh
-usr/share/apr-1.0/build/install.sh
-usr/share/apr-1.0/build/make_exports.awk
-usr/share/apr-1.0/build/make_var_export.awk
-usr/share/apr-1.0/build/mkdir.sh
+usr/share/apr-1.0
 debian/build/docs/dox/html usr/share/doc/libapr1-dev

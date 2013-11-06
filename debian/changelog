@@ -11,8 +11,6 @@ apr (1.4.8-2) UNRELEASED; urgency=low
       Closes: #717231
     - Bump Standards-Version (no additional changes).
   * Support multi-arch.
-  * Depend on libtool instead of shipping a copy in libapr1-dev.
-    Closes: #489625
   * Enable sctp support on Linux.
   * Change apr_rules.mk to not force CFLAGS, etc. to the values used during
     apr's compilation.

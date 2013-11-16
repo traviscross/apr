@@ -55,6 +55,13 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_env_delete@Base 1.2.7
  apr_env_get@Base 1.2.7
  apr_env_set@Base 1.2.7
+ apr_escape_echo@Base 1.5.0
+ apr_escape_entity@Base 1.5.0
+ apr_escape_hex@Base 1.5.0
+ apr_escape_path@Base 1.5.0
+ apr_escape_path_segment@Base 1.5.0
+ apr_escape_shell@Base 1.5.0
+ apr_escape_urlencoded@Base 1.5.0
  apr_file_append@Base 1.2.7
  apr_file_attrs_set@Base 1.2.7
  apr_file_buffer_set@Base 1.3.2
@@ -156,6 +163,9 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_hash_pool_get@Base 1.2.7
  apr_hash_set@Base 1.2.7
  apr_hash_this@Base 1.2.7
+ apr_hash_this_key@Base 1.5.0
+ apr_hash_this_key_len@Base 1.5.0
+ apr_hash_this_val@Base 1.5.0
  apr_hashfunc_default@Base 1.2.7
  apr_inet_ntop@Base 1.2.7
  apr_inet_pton@Base 1.2.7
@@ -213,6 +223,13 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_password_get@Base 1.2.7
  apr_pcalloc@Base 1.2.7
  apr_pcalloc_debug@Base 1.2.7
+ apr_pescape_echo@Base 1.5.0
+ apr_pescape_entity@Base 1.5.0
+ apr_pescape_hex@Base 1.5.0
+ apr_pescape_path@Base 1.5.0
+ apr_pescape_path_segment@Base 1.5.0
+ apr_pescape_shell@Base 1.5.0
+ apr_pescape_urlencoded@Base 1.5.0
  apr_pmemdup@Base 1.2.7
  apr_poll@Base 1.2.7
  apr_poll_method_defname@Base 1.4.2
@@ -305,6 +322,9 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_pstrdup@Base 1.2.7
  apr_pstrmemdup@Base 1.2.7
  apr_pstrndup@Base 1.2.7
+ apr_punescape_entity@Base 1.5.0
+ apr_punescape_hex@Base 1.5.0
+ apr_punescape_url@Base 1.5.0
  apr_pvsprintf@Base 1.2.7
  apr_random_add_entropy@Base 1.2.7
  apr_random_after_fork@Base 1.2.7
@@ -318,8 +338,10 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_rfc822_date@Base 1.2.7
  apr_setup_signal_thread@Base 1.2.7
  apr_shm_attach@Base 1.2.7
+ apr_shm_attach_ex@Base 1.5.0
  apr_shm_baseaddr_get@Base 1.2.7
  apr_shm_create@Base 1.2.7
+ apr_shm_create_ex@Base 1.5.0
  apr_shm_destroy@Base 1.2.7
  apr_shm_detach@Base 1.2.7
  apr_shm_pool_get@Base 1.2.7
@@ -331,12 +353,32 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_signal_init@Base 1.2.7
  apr_signal_thread@Base 1.2.7
  apr_signal_unblock@Base 1.2.7
+ apr_skiplist_add_index@Base 1.5.0
+ apr_skiplist_alloc@Base 1.5.0
+ apr_skiplist_destroy@Base 1.5.0
+ apr_skiplist_find@Base 1.5.0
+ apr_skiplist_find_compare@Base 1.5.0
+ apr_skiplist_free@Base 1.5.0
+ apr_skiplist_getlist@Base 1.5.0
+ apr_skiplist_init@Base 1.5.0
+ apr_skiplist_insert@Base 1.5.0
+ apr_skiplist_insert_compare@Base 1.5.0
+ apr_skiplist_merge@Base 1.5.0
+ apr_skiplist_next@Base 1.5.0
+ apr_skiplist_peek@Base 1.5.0
+ apr_skiplist_pop@Base 1.5.0
+ apr_skiplist_previous@Base 1.5.0
+ apr_skiplist_remove@Base 1.5.0
+ apr_skiplist_remove_all@Base 1.5.0
+ apr_skiplist_remove_compare@Base 1.5.0
+ apr_skiplist_set_compare@Base 1.5.0
  apr_sleep@Base 1.2.7
  apr_snprintf@Base 1.2.7
  apr_sockaddr_equal@Base 1.2.7
  apr_sockaddr_info_get@Base 1.2.7
  apr_sockaddr_ip_get@Base 1.2.7
  apr_sockaddr_ip_getbuf@Base 1.3.2
+ apr_sockaddr_is_wildcard@Base 1.5.0
  apr_sockaddr_vars_set@Base 1.2.7
  apr_socket_accept@Base 1.2.7
  apr_socket_addr_get@Base 1.2.7
@@ -382,6 +424,7 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_table_do@Base 1.2.7
  apr_table_elts@Base 1.2.7
  apr_table_get@Base 1.2.7
+ apr_table_getm@Base 1.5.0
  apr_table_make@Base 1.2.7
  apr_table_merge@Base 1.2.7
  apr_table_mergen@Base 1.2.7
@@ -449,6 +492,9 @@ libapr-1.so.0 libapr1 #MINVER#
  apr_uid_get@Base 1.2.7
  apr_uid_homepath_get@Base 1.2.7
  apr_uid_name_get@Base 1.2.7
+ apr_unescape_entity@Base 1.5.0
+ apr_unescape_hex@Base 1.5.0
+ apr_unescape_url@Base 1.5.0
  apr_unix_child_file_cleanup@Base 1.2.11
  apr_unix_file_cleanup@Base 1.2.7
  apr_unix_mode2perms@Base 1.2.7

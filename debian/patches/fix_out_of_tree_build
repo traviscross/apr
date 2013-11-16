@@ -1,0 +1,21 @@
+Index: apr/Makefile.in
+===================================================================
+--- apr.orig/Makefile.in
++++ apr/Makefile.in
+@@ -18,7 +18,7 @@
+ INCDIR=./include
+ OSDIR=$(top_srcdir)/include/arch/@OSDIR@
+ DEFOSDIR=$(INCDIR)/arch/@DEFAULT_OSDIR@
+-INCLUDES=-I$(INCDIR) -I$(OSDIR) -I$(DEFOSDIR) -I$(top_srcdir)/include/arch/@DEFAULT_OSDIR@ -I$(top_srcdir)/include -I$(top_srcdir)/include/private
++INCLUDES=-I$(INCDIR) -I$(OSDIR) -I$(DEFOSDIR) -I$(top_srcdir)/include/arch/@DEFAULT_OSDIR@ -I$(top_srcdir)/include -I$(top_blddir)/include/private -I$(top_srcdir)/include/private
+ 
+ #
+ # Macros for target determination
+@@ -143,6 +143,7 @@
+ 	$(LINK_PROG) $(OBJECTS_gen_test_char) $(ALL_LIBS)
+ 
+ include/private/apr_escape_test_char.h: tools/gen_test_char@EXEEXT@
++	mkdir -p include/private
+ 	tools/gen_test_char@EXEEXT@ > $@
+ 
+ LINK_PROG = $(LIBTOOL) $(LTFLAGS) --mode=link $(COMPILE) $(LT_LDFLAGS) \

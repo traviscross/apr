@@ -6,3 +6,4 @@ fix_doxygen.patch
 omit_extra_libs.patch
 hurd_shm_flock.patch
 dont_override_external_buildflags
+fix_out_of_tree_build

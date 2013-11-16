@@ -5,6 +5,4 @@ hurd_path_max.patch
 fix_doxygen.patch
 omit_extra_libs.patch
 hurd_shm_flock.patch
-configure-O_NONBLOCK
 dont_override_external_buildflags
-configure-accept4-hurd

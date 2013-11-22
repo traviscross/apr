@@ -76,7 +76,10 @@ override_dh_auto_configure:
 	mkdir -p $(BUILDDIR)/docs
 	for f in $(SAVE_FILES) ; do [ -e $$f.dr-orig ] || cp -p $$f $$f.dr-orig ; done
 	./buildconf
-	cd $(BUILDDIR) && $(CURDIR)/configure $(CONFFLAGS)
+	# We need to force the use of bash here. Otherwise, if apr is built with
+	# /bin/sh -> /bin/bash, the resulting libtool will not work on systems
+	# where /bin/sh -> /bin/dash.
+	cd $(BUILDDIR) && CONFIG_SHELL=/bin/bash /bin/bash $(CURDIR)/configure $(CONFFLAGS)
 ifeq (linux,$(DEB_HOST_ARCH_OS))
 	if grep -q APR_HAS_POSIXSEM_SERIALIZE.*0 $(BUILDDIR)/include/apr.h ;\
 	then \

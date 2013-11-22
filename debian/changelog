@@ -1,3 +1,12 @@
+apr (1.4.8-3) UNRELEASED; urgency=low
+
+  * Re-add the logic to force use of bash for configure/libtool. Otherwise,
+    if the package is build with /bin/sh -> /bin/bash, the shipped libtool
+    won't work on systems with /bin/sh -> /bin/dash. This got lost in
+    1.4.8-2. Closes: #730196
+
+ -- Stefan Fritsch <sf@debian.org>  Sat, 16 Nov 2013 18:31:00 +0100
+
 apr (1.4.8-2) unstable; urgency=low
 
   * Merge some changes from Ubuntu's 1.4.8-1ubuntu1:

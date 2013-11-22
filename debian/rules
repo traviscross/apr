@@ -137,6 +137,10 @@ endif
 override_dh_auto_install:
 	dh_auto_install --destdir=debian/tmp
 	perl -p -i -e "s,^dependency_libs=.*,dependency_libs=''," debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/libapr-1.la
+	if ! head -n 1 debian/tmp/usr/share/apr-1.0/build/libtool | grep -q /bin/bash ; then \
+		echo ERROR: The built libtool uses /bin/sh instead of /bin/bash ; \
+		exit 1 ; \
+	fi
 
 override_dh_strip:
 	dh_strip --dbg-package=libapr1-dbg

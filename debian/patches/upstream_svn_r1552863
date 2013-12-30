@@ -1,0 +1,924 @@
+Index: apr/CHANGES
+===================================================================
+--- apr.orig/CHANGES
++++ apr/CHANGES
+@@ -1,4 +1,26 @@
+                                                      -*- coding: utf-8 -*-
++Changes backported from APR 1.5.x branch
++
++  *) Fix apr_escape.c compilation errors on ebcdic platforms.
++     [Eric Covener]
++
++  *) FreeBSD 10: Correct a regression in 1.5.0 which affected non-
++     blocking sockets in some applications, including httpd.  [Jeff
++     Trawick]
++
++  *) Windows cmake build: Fix incorrect installation of some .pdb
++     files.  [Jeff Trawick]
++
++  *) apr_skiplist: Add compatibility with C++ applications.
++     [Jeff Trawick]
++
++  *) When using shmget-based shared memory, the ID used for ftok is
++     now an APR hash of the filename instead of the constant '1'.
++     PR 53996 [Jim Jagielski]
++
++  *) Correct a regression in 1.5.0 which affected out-of-tree
++     builds on Unix.  [Rainer Jung]
++
+ Changes for APR 1.5.0
+ 
+   *) Fix Linux kernel version check to recognize more versions,
+@@ -9,7 +31,7 @@
+      refers to the wildcard address for the protocol family (e.g.,
+      0.0.0.0/INADDR_ANY for IPv4).  [Jeff Trawick]
+ 
+-  *) apr_file_dup2() on Windows: Fix debug RTL assertion in when 
++  *) apr_file_dup2() on Windows: Fix debug RTL assertion when 
+      attempting to _commit(stdout) or _commit(stderr).  [Mike Rumph
+      <mike.rumph oracle.com>]
+ 
+Index: apr/CMakeLists.txt
+===================================================================
+--- apr.orig/CMakeLists.txt
++++ apr/CMakeLists.txt
+@@ -272,7 +272,7 @@
+ # libaprapp-1 and aprapp-1 are static
+ ADD_LIBRARY(libaprapp-1 STATIC misc/win32/apr_app.c misc/win32/internal.c ${APR_PUBLIC_HEADERS_GENERATED})
+ SET(install_targets ${install_targets} libaprapp-1)
+-SET(install_lib_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/libaprapp-1.pdb)
++SET(install_lib_pdb ${install_lib_pdb} ${PROJECT_BINARY_DIR}/libaprapp-1.pdb)
+ SET_TARGET_PROPERTIES(libaprapp-1 PROPERTIES COMPILE_DEFINITIONS APR_APP)
+ 
+ ADD_LIBRARY(aprapp-1 STATIC misc/win32/apr_app.c misc/win32/internal.c ${APR_PUBLIC_HEADERS_GENERATED})
+Index: apr/Makefile.in
+===================================================================
+--- apr.orig/Makefile.in
++++ apr/Makefile.in
+@@ -18,7 +18,7 @@
+ INCDIR=./include
+ OSDIR=$(top_srcdir)/include/arch/@OSDIR@
+ DEFOSDIR=$(INCDIR)/arch/@DEFAULT_OSDIR@
+-INCLUDES=-I$(INCDIR) -I$(OSDIR) -I$(DEFOSDIR) -I$(top_srcdir)/include/arch/@DEFAULT_OSDIR@ -I$(top_srcdir)/include -I$(top_srcdir)/include/private
++INCLUDES=-I$(INCDIR) -I$(OSDIR) -I$(DEFOSDIR) -I$(top_srcdir)/include/arch/@DEFAULT_OSDIR@ -I$(top_srcdir)/include -I$(top_srcdir)/include/private -I$(top_blddir)/include/private
+ 
+ #
+ # Macros for target determination
+@@ -143,6 +143,7 @@
+ 	$(LINK_PROG) $(OBJECTS_gen_test_char) $(ALL_LIBS)
+ 
+ include/private/apr_escape_test_char.h: tools/gen_test_char@EXEEXT@
++	$(APR_MKDIR) include/private
+ 	tools/gen_test_char@EXEEXT@ > $@
+ 
+ LINK_PROG = $(LIBTOOL) $(LTFLAGS) --mode=link $(COMPILE) $(LT_LDFLAGS) \
+Index: apr/docs/canonical_filenames.html
+===================================================================
+--- apr.orig/docs/canonical_filenames.html
++++ apr/docs/canonical_filenames.html
+@@ -104,9 +104,9 @@
+ stat and case canonicalization calls to the OS.</p>
+ 
+ <p>The comparison operation provides that the APR can postpone correction
+-of case by simply relying upon the device and inode for equivilance.  The
++of case by simply relying upon the device and inode for equivalence.  The
+ stat implementation provides that two files are the same, while their
+-strings are not equivilant, and eliminates the need for the operating
++strings are not equivalent, and eliminates the need for the operating
+ system to return the proper form of the name.</p>
+ 
+ <p>In any case, returning the char* path, with a flag to request the proper
+@@ -153,4 +153,4 @@
+ </pre>
+ 
+ </BODY>
+-</HTML>
+\ No newline at end of file
++</HTML>
+Index: apr/encoding/apr_escape.c
+===================================================================
+--- apr.orig/encoding/apr_escape.c
++++ apr/encoding/apr_escape.c
+@@ -30,11 +30,43 @@
+ #include "apr_lib.h"
+ #include "apr_strings.h"
+ 
+-/* helper for Latin1 <-> entity encoding */
+ #if APR_CHARSET_EBCDIC
+-#include "apr_xlate.h"
+-#define RAW_ASCII_CHAR(ch)  apr_xlate_conv_byte(ap_hdrs_from_ascii, \
+-                                                (unsigned char)ch)
++static int convert_a2e[256] = {
++  0x00, 0x01, 0x02, 0x03, 0x37, 0x2D, 0x2E, 0x2F, 0x16, 0x05, 0x15, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
++  0x10, 0x11, 0x12, 0x13, 0x3C, 0x3D, 0x32, 0x26, 0x18, 0x19, 0x3F, 0x27, 0x1C, 0x1D, 0x1E, 0x1F,
++  0x40, 0x5A, 0x7F, 0x7B, 0x5B, 0x6C, 0x50, 0x7D, 0x4D, 0x5D, 0x5C, 0x4E, 0x6B, 0x60, 0x4B, 0x61,
++  0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0x7A, 0x5E, 0x4C, 0x7E, 0x6E, 0x6F,
++  0x7C, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6,
++  0xD7, 0xD8, 0xD9, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xAD, 0xE0, 0xBD, 0x5F, 0x6D,
++  0x79, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96,
++  0x97, 0x98, 0x99, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xC0, 0x4F, 0xD0, 0xA1, 0x07,
++  0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x06, 0x17, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x09, 0x0A, 0x1B,
++  0x30, 0x31, 0x1A, 0x33, 0x34, 0x35, 0x36, 0x08, 0x38, 0x39, 0x3A, 0x3B, 0x04, 0x14, 0x3E, 0xFF,
++  0x41, 0xAA, 0x4A, 0xB1, 0x9F, 0xB2, 0x6A, 0xB5, 0xBB, 0xB4, 0x9A, 0x8A, 0xB0, 0xCA, 0xAF, 0xBC,
++  0x90, 0x8F, 0xEA, 0xFA, 0xBE, 0xA0, 0xB6, 0xB3, 0x9D, 0xDA, 0x9B, 0x8B, 0xB7, 0xB8, 0xB9, 0xAB,
++  0x64, 0x65, 0x62, 0x66, 0x63, 0x67, 0x9E, 0x68, 0x74, 0x71, 0x72, 0x73, 0x78, 0x75, 0x76, 0x77,
++  0xAC, 0x69, 0xED, 0xEE, 0xEB, 0xEF, 0xEC, 0xBF, 0x80, 0xFD, 0xFE, 0xFB, 0xFC, 0xBA, 0xAE, 0x59,
++  0x44, 0x45, 0x42, 0x46, 0x43, 0x47, 0x9C, 0x48, 0x54, 0x51, 0x52, 0x53, 0x58, 0x55, 0x56, 0x57,
++  0x8C, 0x49, 0xCD, 0xCE, 0xCB, 0xCF, 0xCC, 0xE1, 0x70, 0xDD, 0xDE, 0xDB, 0xDC, 0x8D, 0x8E, 0xDF };
++
++static int convert_e2a[256] = {
++  0x00, 0x01, 0x02, 0x03, 0x9C, 0x09, 0x86, 0x7F, 0x97, 0x8D, 0x8E, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
++  0x10, 0x11, 0x12, 0x13, 0x9D, 0x0A, 0x08, 0x87, 0x18, 0x19, 0x92, 0x8F, 0x1C, 0x1D, 0x1E, 0x1F,
++  0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x17, 0x1B, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x05, 0x06, 0x07,
++  0x90, 0x91, 0x16, 0x93, 0x94, 0x95, 0x96, 0x04, 0x98, 0x99, 0x9A, 0x9B, 0x14, 0x15, 0x9E, 0x1A,
++  0x20, 0xA0, 0xE2, 0xE4, 0xE0, 0xE1, 0xE3, 0xE5, 0xE7, 0xF1, 0xA2, 0x2E, 0x3C, 0x28, 0x2B, 0x7C,
++  0x26, 0xE9, 0xEA, 0xEB, 0xE8, 0xED, 0xEE, 0xEF, 0xEC, 0xDF, 0x21, 0x24, 0x2A, 0x29, 0x3B, 0x5E,
++  0x2D, 0x2F, 0xC2, 0xC4, 0xC0, 0xC1, 0xC3, 0xC5, 0xC7, 0xD1, 0xA6, 0x2C, 0x25, 0x5F, 0x3E, 0x3F,
++  0xF8, 0xC9, 0xCA, 0xCB, 0xC8, 0xCD, 0xCE, 0xCF, 0xCC, 0x60, 0x3A, 0x23, 0x40, 0x27, 0x3D, 0x22,
++  0xD8, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0xAB, 0xBB, 0xF0, 0xFD, 0xFE, 0xB1,
++  0xB0, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72, 0xAA, 0xBA, 0xE6, 0xB8, 0xC6, 0xA4,
++  0xB5, 0x7E, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0xA1, 0xBF, 0xD0, 0x5B, 0xDE, 0xAE,
++  0xAC, 0xA3, 0xA5, 0xB7, 0xA9, 0xA7, 0xB6, 0xBC, 0xBD, 0xBE, 0xDD, 0xA8, 0xAF, 0x5D, 0xB4, 0xD7,
++  0x7B, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0xAD, 0xF4, 0xF6, 0xF2, 0xF3, 0xF5,
++  0x7D, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0xB9, 0xFB, 0xFC, 0xF9, 0xFA, 0xFF,
++  0x5C, 0xF7, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0xB2, 0xD4, 0xD6, 0xD2, 0xD3, 0xD5,
++  0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0xB3, 0xDB, 0xDC, 0xD9, 0xDA, 0x9F };
++#define RAW_ASCII_CHAR(ch)  convert_e2a[(unsigned char)ch]
+ #else /* APR_CHARSET_EBCDIC */
+ #define RAW_ASCII_CHAR(ch)  (ch)
+ #endif /* !APR_CHARSET_EBCDIC */
+@@ -139,8 +171,7 @@
+     xstr[2]=what[0];
+     xstr[3]=what[1];
+     xstr[4]='\0';
+-    digit = apr_xlate_conv_byte(ap_hdrs_from_ascii,
+-            0xFF & strtol(xstr, NULL, 16));
++    digit = convert_a2e[0xFF & strtol(xstr, NULL, 16)];
+ #endif /*APR_CHARSET_EBCDIC*/
+     return (digit);
+ }
+@@ -299,7 +330,7 @@
+         unsigned char *where)
+ {
+ #if APR_CHARSET_EBCDIC
+-    what = apr_xlate_conv_byte(ap_hdrs_to_ascii, (unsigned char)what);
++    what = convert_e2a[(unsigned char)what];
+ #endif /*APR_CHARSET_EBCDIC*/
+     *where++ = prefix;
+     *where++ = c2x_table[what >> 4];
+Index: apr/include/apr_escape.h
+===================================================================
+--- apr.orig/include/apr_escape.h
++++ apr/include/apr_escape.h
+@@ -72,7 +72,7 @@
+ APR_DECLARE(const char *) apr_pescape_shell(apr_pool_t *p, const char *str)
+         __attribute__((nonnull(1)));
+ 
+-/*
++/**
+  * Unescapes a URL, leaving reserved characters intact.
+  * @param escaped Optional buffer to write the encoded string, can be
+  * NULL
+@@ -93,7 +93,7 @@
+         apr_ssize_t slen, const char *forbid, const char *reserved, int plus,
+         apr_size_t *len);
+ 
+-/*
++/**
+  * Unescapes a URL, leaving reserved characters intact, returning the
+  * result from a pool.
+  * @param p Pool to allocate from
+@@ -212,7 +212,7 @@
+  * double quote becomes '&quot;" and the single quote becomes '&apos;'.
+  *
+  * If toasc is not zero, any non ascii character will be encoded as
+- * '%#ddd;', where ddd is the decimal code of the character.
++ * '%\#ddd;', where ddd is the decimal code of the character.
+  * @param escaped Optional buffer to write the encoded string, can be
+  * NULL
+  * @param str The original string
+@@ -239,14 +239,14 @@
+ APR_DECLARE(const char *) apr_pescape_entity(apr_pool_t *p, const char *str,
+         int toasc) __attribute__((nonnull(1)));
+ 
+-/*
++/**
+  * Decodes html entities or numeric character references in a string. If
+  * the string to be unescaped is syntactically incorrect, then the
+  * following fixups will be made:
+  * unknown entities will be left undecoded;
+  * references to unused numeric characters will be deleted.
+  * In particular, &#00; will not be decoded, but will be deleted.
+- * @param escaped Optional buffer to write the encoded string, can be
++ * @param unescaped Optional buffer to write the encoded string, can be
+  * NULL
+  * @param str The original string
+  * @param slen The length of the original string, or APR_ESCAPE_STRING
+@@ -257,7 +257,7 @@
+ APR_DECLARE(apr_status_t) apr_unescape_entity(char *unescaped, const char *str,
+         apr_ssize_t slen, apr_size_t *len);
+ 
+-/*
++/**
+  * Decodes html entities or numeric character references in a string. If
+  * the string to be unescaped is syntactically incorrect, then the
+  * following fixups will be made:
+@@ -275,10 +275,10 @@
+ /**
+  * Escape control characters in a string, as performed by the shell's
+  * 'echo' command. Characters are replaced as follows:
+- * \a alert (bell), \b backspace, \f form feed, \n new line, \r carriage
+- * return, \t horizontal tab, \v vertical tab, \\ backslash.
++ * \\a alert (bell), \\b backspace, \\f form feed, \\n new line, \\r carriage
++ * return, \\t horizontal tab, \\v vertical tab, \\ backslash.
+  *
+- * Any non ascii character will be encoded as '\xHH', where HH is the hex
++ * Any non ascii character will be encoded as '\\xHH', where HH is the hex
+  * code of the character.
+  *
+  * If quote is not zero, the double quote character will also be escaped.
+@@ -297,11 +297,11 @@
+ /**
+  * Escape control characters in a string, as performed by the shell's
+  * 'echo' command, and return the results from a pool. Characters are
+- * replaced as follows: \a alert (bell), \b backspace, \f form feed,
+- * \n new line, \r carriage return, \t horizontal tab, \v vertical tab,
++ * replaced as follows: \\a alert (bell), \\b backspace, \\f form feed,
++ * \\n new line, \\r carriage return, \\t horizontal tab, \\v vertical tab,
+  * \\ backslash.
+  *
+- * Any non ascii character will be encoded as '\xHH', where HH is the hex
++ * Any non ascii character will be encoded as '\\xHH', where HH is the hex
+  * code of the character.
+  *
+  * If quote is not zero, the double quote character will also be escaped.
+@@ -342,7 +342,7 @@
+ /**
+  * Convert hex encoded string to binary data.
+  * @param dest The destination buffer, can be NULL
+- * @param src The original buffer
++ * @param str The original buffer
+  * @param slen The length of the original buffer
+  * @param colon If not zero, ignore colon characters between hex digits.
+  * @param len If present, returns the length of the string
+Index: apr/include/apr_file_io.h
+===================================================================
+--- apr.orig/include/apr_file_io.h
++++ apr/include/apr_file_io.h
+@@ -237,8 +237,6 @@
+  *                               support, see WARNING below 
+  * @li #APR_FOPEN_SPARSE         Platform dependent flag to enable sparse file
+  *                               support, see WARNING below
+- * @li #APR_FOPEN_ROTATING       Do file file rotation checking
+- * @li #APR_FOPEN_MANUAL_ROTATE  Enable Manual rotation
+  * @li #APR_FOPEN_NONBLOCK       Platform dependent flag to enable
+  *                               non blocking file io
+  * @param perm Access permissions for file.
+Index: apr/include/apr_network_io.h
+===================================================================
+--- apr.orig/include/apr_network_io.h
++++ apr/include/apr_network_io.h
+@@ -405,6 +405,8 @@
+  * @param hostname The hostname.
+  * @param sa The apr_sockaddr_t.
+  * @param flags Special processing flags.
++ * @remark Results can vary significantly between platforms
++ * when processing wildcard socket addresses.
+  */
+ APR_DECLARE(apr_status_t) apr_getnameinfo(char **hostname,
+                                           apr_sockaddr_t *sa,
+Index: apr/include/apr_skiplist.h
+===================================================================
+--- apr.orig/include/apr_skiplist.h
++++ apr/include/apr_skiplist.h
+@@ -14,69 +14,246 @@
+  * limitations under the License.
+  */
+ 
+-#ifndef _APR_SKIPLIST_P_H
+-#define _APR_SKIPLIST_P_H
++#ifndef APR_SKIPLIST_H
++#define APR_SKIPLIST_H
++/**
++ * @file apr_skiplist.h
++ * @brief APR skip list implementation
++ */
+ 
+ #include "apr.h"
+ #include "apr_portable.h"
+ #include <stdlib.h>
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif /* __cplusplus */
++
++/**
++ * @defgroup apr_skiplist Skip list implementation
++ * Refer to http://en.wikipedia.org/wiki/Skip_list for information
++ * about the purpose of and ideas behind skip lists.
++ * @ingroup APR
++ * @{
++ */
+ 
+-/* This is the function type that must be implemented per object type
+-   that is used in a skiplist for comparisons to maintain order */
++/**
++ * apr_skiplist_compare is the function type that must be implemented 
++ * per object type that is used in a skip list for comparisons to maintain
++ * order
++ * */
+ typedef int (*apr_skiplist_compare) (void *, void *);
++
++/**
++ * apr_skiplist_freefunc is the function type that must be implemented
++ * to handle elements as they are removed from a skip list.
++ */
+ typedef void (*apr_skiplist_freefunc) (void *);
+ 
++/** Opaque structure used to represent the skip list */
+ struct apr_skiplist;
+-struct apr_skiplistnode;
++/** Opaque structure used to represent the skip list */
++typedef struct apr_skiplist apr_skiplist;
+ 
++/** 
++ * Opaque structure used to represent abstract nodes in the skip list
++ * (an abstraction above the raw elements which are collected in the
++ * skip list).
++ */
++struct apr_skiplistnode;
++/** Opaque structure */
+ typedef struct apr_skiplistnode apr_skiplistnode;
+-typedef struct apr_skiplist apr_skiplist;
+ 
++/**
++ * Allocate memory using the same mechanism as the skip list.
++ * @param sl The skip list
++ * @param size The amount to allocate
++ * @remark If a pool was provided to apr_skiplist_init(), memory will
++ * be allocated from the pool or from a free list maintained with
++ * the skip list.  Otherwise, memory will be allocated using the
++ * C standard library heap functions.
++ */
+ APR_DECLARE(void *) apr_skiplist_alloc(apr_skiplist *sl, size_t size);
+ 
++/**
++ * Free memory using the same mechanism as the skip list.
++ * @param sl The skip list
++ * @param mem The object to free
++ * @remark If a pool was provided to apr_skiplist_init(), memory will
++ * be added to a free list maintained with the skip list and be available
++ * to operations on the skip list or to other calls to apr_skiplist_alloc().
++ * Otherwise, memory will be freed using the  C standard library heap
++ * functions.
++ */
+ APR_DECLARE(void) apr_skiplist_free(apr_skiplist *sl, void *mem);
+ 
++/**
++ * Allocate a new skip list
++ * @param sl The pointer in which to return the newly created skip list
++ * @param p The pool from which to allocate the skip list (optional).
++ * @remark Unlike most APR functions, a pool is optional.  If no pool
++ * is provided, the C standard library heap functions will be used instead.
++ */
+ APR_DECLARE(apr_status_t) apr_skiplist_init(apr_skiplist **sl, apr_pool_t *p);
+ 
+-APR_DECLARE(void) apr_skiplist_set_compare(apr_skiplist *sl, apr_skiplist_compare,
+-                             apr_skiplist_compare);
++/**
++ * Set the comparison functions to be used for searching the skip list.
++ * @param sl The skip list
++ * @param XXX1 FIXME
++ * @param XXX2 FIXME
++ *
++ * @remark If existing comparison functions are being replaced, the index
++ * will be replaced during this call.  That is a potentially expensive
++ * operation.
++ */
++APR_DECLARE(void) apr_skiplist_set_compare(apr_skiplist *sl, apr_skiplist_compare XXX1,
++                             apr_skiplist_compare XXX2);
+ 
+-APR_DECLARE(void) apr_skiplist_add_index(apr_skiplist *sl, apr_skiplist_compare,
+-                        apr_skiplist_compare);
++/**
++ * Set the indexing functions to the specified comparison functions and
++ * rebuild the index.
++ * @param sl The skip list
++ * @param XXX1 FIXME
++ * @param XXX2 FIXME
++ *
++ * @remark If an index already exists, it will not be replaced and the
++ * comparison functions will not be changed.
++ */
++APR_DECLARE(void) apr_skiplist_add_index(apr_skiplist *sl, apr_skiplist_compare XXX1,
++                        apr_skiplist_compare XXX2);
+ 
++/**
++ * Return the list maintained by the skip list abstraction.
++ * @param sl The skip list
++ */
+ APR_DECLARE(apr_skiplistnode *) apr_skiplist_getlist(apr_skiplist *sl);
+ 
++/**
++ * Return the next matching element in the skip list using the specified
++ * comparison function.
++ * @param sl The skip list
++ * @param data The value to search for
++ * @param iter A pointer to the returned skip list node representing the element
++ * found
++ * @param func The comparison function to use
++ */
+ APR_DECLARE(void *) apr_skiplist_find_compare(apr_skiplist *sl,
+                                void *data,
+                                apr_skiplistnode **iter,
+                                apr_skiplist_compare func);
+ 
++/**
++ * Return the next matching element in the skip list using the current comparison
++ * function.
++ * @param sl The skip list
++ * @param data The value to search for
++ * @param iter A pointer to the returned skip list node representing the element
++ * found
++ */
+ APR_DECLARE(void *) apr_skiplist_find(apr_skiplist *sl, void *data, apr_skiplistnode **iter);
+ 
++/**
++ * Return the next element in the skip list.
++ * @param sl The skip list
++ * @param iter On entry, a pointer to the skip list node to start with; on return,
++ * a pointer to the skip list node representing the element returned
++ * @remark If iter points to a NULL value on entry, NULL will be returned.
++ */
+ APR_DECLARE(void *) apr_skiplist_next(apr_skiplist *sl, apr_skiplistnode **iter);
+ 
++/**
++ * Return the previous element in the skip list.
++ * @param sl The skip list
++ * @param iter On entry, a pointer to the skip list node to start with; on return,
++ * a pointer to the skip list node representing the element returned
++ * @remark If iter points to a NULL value on entry, NULL will be returned.
++ */
+ APR_DECLARE(void *) apr_skiplist_previous(apr_skiplist *sl, apr_skiplistnode **iter);
+ 
+-
++/**
++ * Insert an element into the skip list using the specified comparison function.
++ * @param sl The skip list
++ * @param data The element to insert
++ * @param comp The comparison function to use for placement into the skip list
++ */
+ APR_DECLARE(apr_skiplistnode *) apr_skiplist_insert_compare(apr_skiplist *sl,
+                                           void *data, apr_skiplist_compare comp);
+ 
++/**
++ * Insert an element into the skip list using the existing comparison function.
++ * @param sl The skip list
++ * @param data The element to insert
++ * @remark If no comparison function has been set for the skip list, the element
++ * will not be inserted and NULL will be returned.
++ */
+ APR_DECLARE(apr_skiplistnode *) apr_skiplist_insert(apr_skiplist* sl, void *data);
+ 
++/**
++ * Remove an element from the skip list using the specified comparison function for
++ * locating the element.
++ * @param sl The skip list
++ * @param data The element to remove
++ * @param myfree A function to be called for each removed element
++ * @param comp The comparison function to use for placement into the skip list
++ * @remark If the element is not found, 0 will be returned.  Otherwise, the heightXXX
++ * will be returned.
++ */
+ APR_DECLARE(int) apr_skiplist_remove_compare(apr_skiplist *sl, void *data,
+                                apr_skiplist_freefunc myfree, apr_skiplist_compare comp);
+ 
++/**
++ * Remove an element from the skip list using the existing comparison function for
++ * locating the element.
++ * @param sl The skip list
++ * @param data The element to remove
++ * @param myfree A function to be called for each removed element
++ * @remark If the element is not found, 0 will be returned.  Otherwise, the heightXXX
++ * will be returned.
++ * @remark If no comparison function has been set for the skip list, the element
++ * will not be removed and 0 will be returned.
++ */
+ APR_DECLARE(int) apr_skiplist_remove(apr_skiplist *sl, void *data, apr_skiplist_freefunc myfree);
+ 
++/**
++ * Remove all elements from the skip list.
++ * @param sl The skip list
++ * @param myfree A function to be called for each removed element
++ */
+ APR_DECLARE(void) apr_skiplist_remove_all(apr_skiplist *sl, apr_skiplist_freefunc myfree);
+ 
++/**
++ * Remove each element from the skip list.
++ * @param sl The skip list
++ * @param myfree A function to be called for each removed element
++ */
+ APR_DECLARE(void) apr_skiplist_destroy(apr_skiplist *sl, apr_skiplist_freefunc myfree);
+ 
+-APR_DECLARE(void *) apr_skiplist_pop(apr_skiplist *a, apr_skiplist_freefunc myfree);
++/**
++ * Return the first element in the skip list, leaving the element in the skip list.
++ * @param sl The skip list
++ * @param myfree A function to be called for the removed element
++ * @remark NULL will be returned if there are no elements
++ */
++APR_DECLARE(void *) apr_skiplist_pop(apr_skiplist *sl, apr_skiplist_freefunc myfree);
+ 
+-APR_DECLARE(void *) apr_skiplist_peek(apr_skiplist *a);
++/**
++ * Return the first element in the skip list, leaving the element in the skip list.
++ * @param sl The skip list
++ * @remark NULL will be returned if there are no elements
++ */
++APR_DECLARE(void *) apr_skiplist_peek(apr_skiplist *sl);
+ 
++/**
++ * Merge two skip lists.  XXX SEMANTICS
++ * @param sl1 One of two skip lists to be merged
++ * @param sl2 The other of two skip lists to be merged
++ */
+ APR_DECLARE(apr_skiplist *) apr_skiplist_merge(apr_skiplist *sl1, apr_skiplist *sl2);
+ 
++/** @} */
++
++#ifdef __cplusplus
++}
+ #endif
++
++#endif /* ! APR_SKIPLIST_H */
+Index: apr/include/apr_version.h
+===================================================================
+--- apr.orig/include/apr_version.h
++++ apr/include/apr_version.h
+@@ -62,14 +62,14 @@
+  * The Patch Level never includes API changes, simply bug fixes.
+  * Reset to 0 when upgrading APR_MINOR_VERSION
+  */
+-#define APR_PATCH_VERSION       0
++#define APR_PATCH_VERSION       1
+ 
+ /** 
+  * The symbol APR_IS_DEV_VERSION is only defined for internal,
+  * "development" copies of APR.  It is undefined for released versions
+  * of APR.
+  */
+-/* #define APR_IS_DEV_VERSION */
++#define APR_IS_DEV_VERSION
+ 
+ /**
+  * Check at compile time if the APR version is at least a certain
+Index: apr/include/arch/netware/apr_private.h
+===================================================================
+--- apr.orig/include/arch/netware/apr_private.h
++++ apr/include/arch/netware/apr_private.h
+@@ -79,7 +79,7 @@
+ #define HAVE_GETPASS_R  1
+ /*
+  * Hack around older NDKs which have only the getpassword() function,
+- * a threadsafe, API-equivilant of getpass_r().
++ * a threadsafe, API-equivalent of getpass_r().
+  */
+ #if (CURRENT_NDK_THRESHOLD < 709060000)
+ #define getpass_r       getpassword
+Index: apr/network_io/unix/socket_util.c
+===================================================================
+--- apr.orig/network_io/unix/socket_util.c
++++ apr/network_io/unix/socket_util.c
+@@ -46,7 +46,8 @@
+         /* Some other error -> unexpected error. */
+         return rv;
+     }
+-    else if (nfds == 1 && pfds[0].rtnevents == APR_POLLIN) {
++    /* Many platforms return only APR_POLLIN; OS X returns APR_POLLHUP|APR_POLLIN */
++    else if (nfds == 1 && (pfds[0].rtnevents & APR_POLLIN)  == APR_POLLIN) {
+         apr_sockaddr_t unused;
+         apr_size_t len = 1;
+         char buf;
+Index: apr/network_io/unix/sockets.c
+===================================================================
+--- apr.orig/network_io/unix/sockets.c
++++ apr/network_io/unix/sockets.c
+@@ -207,7 +207,20 @@
+     sa.salen = sizeof(sa.sa);
+ 
+ #ifdef HAVE_ACCEPT4
+-    s = accept4(sock->socketdes, (struct sockaddr *)&sa.sa, &sa.salen, SOCK_CLOEXEC);
++    {
++        int flags = SOCK_CLOEXEC;
++
++#if defined(SOCK_NONBLOCK) && APR_O_NONBLOCK_INHERITED
++        /* With FreeBSD accept4() (avail in 10+), O_NONBLOCK is not inherited
++         * (unlike Linux).  Mimic the accept() behavior here in a way that
++         * may help other platforms.
++         */
++        if (apr_is_option_set(sock, APR_SO_NONBLOCK) == 1) {
++            flags |= SOCK_NONBLOCK;
++        }
++#endif
++        s = accept4(sock->socketdes, (struct sockaddr *)&sa.sa, &sa.salen, flags);
++    }
+ #else
+     s = accept(sock->socketdes, (struct sockaddr *)&sa.sa, &sa.salen);
+ #endif
+Index: apr/shmem/unix/shm.c
+===================================================================
+--- apr.orig/shmem/unix/shm.c
++++ apr/shmem/unix/shm.c
+@@ -20,6 +20,7 @@
+ #include "apr_errno.h"
+ #include "apr_user.h"
+ #include "apr_strings.h"
++#include "apr_hash.h"
+ 
+ static apr_status_t shm_cleanup_owner(void *m_)
+ {
+@@ -103,6 +104,7 @@
+ #if APR_USE_SHMEM_SHMGET
+     apr_size_t nbytes;
+     key_t shmkey;
++    apr_ssize_t slen;
+ #endif
+ #if APR_USE_SHMEM_MMAP_ZERO || APR_USE_SHMEM_SHMGET || \
+     APR_USE_SHMEM_MMAP_TMP || APR_USE_SHMEM_MMAP_SHM
+@@ -312,7 +314,9 @@
+ 
+         /* ftok() (on solaris at least) requires that the file actually
+          * exist before calling ftok(). */
+-        shmkey = ftok(filename, 1);
++        slen = strlen(filename);
++        shmkey = ftok(filename,
++                      (int)apr_hashfunc_default(filename, &slen));
+         if (shmkey == (key_t)-1) {
+             apr_file_close(file);
+             return errno;
+@@ -382,6 +386,7 @@
+     apr_file_t *file;  
+     key_t shmkey;
+     int shmid;
++    apr_ssize_t slen;
+ #endif
+ 
+ #if APR_USE_SHMEM_MMAP_TMP
+@@ -401,7 +406,9 @@
+ 
+     /* ftok() (on solaris at least) requires that the file actually
+      * exist before calling ftok(). */
+-    shmkey = ftok(filename, 1);
++    slen = strlen(filename);
++    shmkey = ftok(filename,
++                  (int)apr_hashfunc_default(filename, &slen));
+     if (shmkey == (key_t)-1) {
+         goto shm_remove_failed;
+     }
+@@ -533,6 +540,7 @@
+         apr_file_t *file;   /* file where metadata is stored */
+         apr_size_t nbytes;
+         key_t shmkey;
++        apr_ssize_t slen;
+ 
+         new_m = apr_palloc(pool, sizeof(apr_shm_t));
+ 
+@@ -555,7 +563,9 @@
+ 
+         new_m->filename = apr_pstrdup(pool, filename);
+         new_m->pool = pool;
+-        shmkey = ftok(filename, 1);
++        slen = strlen(filename);
++        shmkey = ftok(filename,
++                      (int)apr_hashfunc_default(filename, &slen));
+         if (shmkey == (key_t)-1) {
+             return errno;
+         }
+Index: apr/test/sockchild.c
+===================================================================
+--- apr.orig/test/sockchild.c
++++ apr/test/sockchild.c
+@@ -69,8 +69,14 @@
+         
+         exit((int)length);
+     }
+-    else if (!strcmp("write", argv[1])) {
++    else if (!strcmp("write", argv[1])
++             || !strcmp("write_after_delay", argv[1])) {
+         apr_size_t length = strlen(DATASTR);
++
++        if (!strcmp("write_after_delay", argv[1])) {
++            apr_sleep(apr_time_from_sec(2));
++        }
++
+         apr_socket_send(sock, DATASTR, &length);
+ 
+         apr_socket_close(sock);
+Index: apr/test/testatomic.c
+===================================================================
+--- apr.orig/test/testatomic.c
++++ apr/test/testatomic.c
+@@ -167,6 +167,17 @@
+     ABTS_INT_EQUAL(tc, 27, y32);
+ }
+ 
++static void test_add32_neg(abts_case *tc, void *data)
++{
++    apr_uint32_t oldval;
++    apr_uint32_t y32;
++
++    apr_atomic_set32(&y32, 23);
++    oldval = apr_atomic_add32(&y32, -10);
++    ABTS_INT_EQUAL(tc, 23, oldval);
++    ABTS_INT_EQUAL(tc, 13, y32);
++}
++
+ static void test_inc32(abts_case *tc, void *data)
+ {
+     apr_uint32_t oldval;
+@@ -509,6 +520,7 @@
+     abts_run_test(suite, test_casptr_equal_nonnull, NULL);
+     abts_run_test(suite, test_casptr_notequal, NULL);
+     abts_run_test(suite, test_add32, NULL);
++    abts_run_test(suite, test_add32_neg, NULL);
+     abts_run_test(suite, test_inc32, NULL);
+     abts_run_test(suite, test_set_add_inc_sub, NULL);
+     abts_run_test(suite, test_wrap_zero, NULL);
+Index: apr/test/testescape.c
+===================================================================
+--- apr.orig/test/testescape.c
++++ apr/test/testescape.c
+@@ -166,6 +166,7 @@
+             apr_psprintf(pool, "size mismatch (%" APR_SIZE_T_FMT "!=%" APR_SIZE_T_FMT ")", len, strlen(dest) + 1),
+             (len == strlen(dest) + 1));
+ 
++#if !APR_CHARSET_EBCDIC
+     src = "Hello";
+     dest = apr_pescape_entity(pool, src, 1);
+     ABTS_PTR_EQUAL(tc, src, dest);
+@@ -209,6 +210,7 @@
+     ABTS_ASSERT(tc,
+             apr_psprintf(pool, "size mismatch (%" APR_SIZE_T_FMT "!=%" APR_SIZE_T_FMT ")", len, strlen(dest) + 1),
+             (len == strlen(dest) + 1));
++#endif
+ 
+     src = "Hello";
+     dest = apr_pescape_echo(pool, src, 0);
+Index: apr/test/testmmap.c
+===================================================================
+--- apr.orig/test/testmmap.c
++++ apr/test/testmmap.c
+@@ -26,16 +26,16 @@
+  * length on a platform?
+  */
+ #define PATH_LEN 255
+-#define TEST_STRING "This is the MMAP data file."APR_EOL_STR
+ 
+ #if !APR_HAS_MMAP
+ static void not_implemented(abts_case *tc, void *data)
+ {
+-    ABTS_NOT_IMPL(tc, "User functions");
++    ABTS_NOT_IMPL(tc, "MMAP functions");
+ }
+ 
+ #else
+ 
++static char test_string[256]; /* read from the datafile */
+ static apr_mmap_t *themmap = NULL;
+ static apr_file_t *thefile = NULL;
+ static char *file1;
+@@ -69,6 +69,17 @@
+     ABTS_INT_EQUAL(tc, APR_SUCCESS, rv);
+ }
+    
++static void read_expected_contents(abts_case *tc, void *data)
++{
++    apr_status_t rv;
++    apr_size_t nbytes = sizeof(test_string) - 1;
++
++    rv = apr_file_read(thefile, test_string, &nbytes);
++    ABTS_INT_EQUAL(tc, APR_SUCCESS, rv);
++    test_string[nbytes] = '\0';
++    thisfsize = strlen(test_string);
++}
++
+ static void test_file_open(abts_case *tc, void *data)
+ {
+     apr_status_t rv;
+@@ -105,7 +116,7 @@
+     ABTS_SIZE_EQUAL(tc, thisfsize, themmap->size);
+ 
+     /* Must use nEquals since the string is not guaranteed to be NULL terminated */
+-    ABTS_STR_NEQUAL(tc, themmap->mm, TEST_STRING, thisfsize);
++    ABTS_STR_NEQUAL(tc, themmap->mm, test_string, thisfsize);
+ }
+ 
+ static void test_mmap_delete(abts_case *tc, void *data)
+@@ -127,7 +138,7 @@
+ 
+     ABTS_INT_EQUAL(tc, APR_SUCCESS, rv);
+     /* Must use nEquals since the string is not guaranteed to be NULL terminated */
+-    ABTS_STR_NEQUAL(tc, addr, TEST_STRING + 5, thisfsize-5);
++    ABTS_STR_NEQUAL(tc, addr, test_string + 5, thisfsize-5);
+ }
+ #endif
+ 
+@@ -136,10 +147,9 @@
+     suite = ADD_SUITE(suite)
+ 
+ #if APR_HAS_MMAP    
+-    thisfsize = strlen(TEST_STRING);
+-
+     abts_run_test(suite, create_filename, NULL);
+     abts_run_test(suite, test_file_open, NULL);
++    abts_run_test(suite, read_expected_contents, NULL);
+     abts_run_test(suite, test_get_filesize, NULL);
+     abts_run_test(suite, test_mmap_create, NULL);
+     abts_run_test(suite, test_mmap_contents, NULL);
+Index: apr/test/testsock.c
+===================================================================
+--- apr.orig/test/testsock.c
++++ apr/test/testsock.c
+@@ -23,6 +23,8 @@
+ #include "apr_lib.h"
+ #include "apr_strings.h"
+ #include "apr_poll.h"
++#define APR_WANT_BYTEFUNC
++#include "apr_want.h"
+ 
+ static void launch_child(abts_case *tc, apr_proc_t *proc, const char *arg1, apr_pool_t *p)
+ {
+@@ -350,8 +352,8 @@
+ 
+     APR_ASSERT_SUCCESS(tc, "create subpool", apr_pool_create(&subp, p));
+ 
+-    if ((ld = setup_socket(tc)) != APR_SUCCESS)
+-        return;
++    ld = setup_socket(tc);
++    if (!ld) return;
+ 
+     APR_ASSERT_SUCCESS(tc,
+                        "get local address of bound socket",
+@@ -438,6 +440,54 @@
+     apr_pool_destroy(subp);
+ }
+ 
++/* Make sure that setting a connected socket non-blocking works
++ * when the listening socket was non-blocking.
++ * If APR thinks that non-blocking is inherited but it really
++ * isn't, this testcase will fail.
++ */
++static void test_nonblock_inheritance(abts_case *tc, void *data)
++{
++    apr_status_t rv;
++    apr_socket_t *sock;
++    apr_socket_t *sock2;
++    apr_proc_t proc;
++    char buffer[10];
++    apr_size_t length;
++    int tries;
++
++    sock = setup_socket(tc);
++    if (!sock) return;
++
++    rv = apr_socket_opt_set(sock, APR_SO_NONBLOCK, 1);
++    APR_ASSERT_SUCCESS(tc, "Could not make listening socket nonblocking", rv);
++
++    launch_child(tc, &proc, "write_after_delay", p);
++
++    tries = 10;
++    while (tries--) {
++        rv = apr_socket_accept(&sock2, sock, p);
++        if (!APR_STATUS_IS_EAGAIN(rv)) {
++            break;
++        }
++        apr_sleep(apr_time_from_msec(50));
++    }
++    APR_ASSERT_SUCCESS(tc, "Problem with receiving connection", rv);
++
++    rv = apr_socket_opt_set(sock2, APR_SO_NONBLOCK, 1);
++    APR_ASSERT_SUCCESS(tc, "Could not make connected socket nonblocking", rv);
++
++    length = sizeof buffer;
++    rv = apr_socket_recv(sock2, buffer, &length);
++    ABTS_ASSERT(tc, "should have gotten EAGAIN", APR_STATUS_IS_EAGAIN(rv));
++
++    wait_child(tc, &proc);
++
++    rv = apr_socket_close(sock2);
++    APR_ASSERT_SUCCESS(tc, "Problem closing connected socket", rv);
++    rv = apr_socket_close(sock);
++    APR_ASSERT_SUCCESS(tc, "Problem closing socket", rv);
++}
++
+ abts_suite *testsock(abts_suite *suite)
+ {
+     suite = ADD_SUITE(suite)
+@@ -451,6 +501,7 @@
+     abts_run_test(suite, test_timeout, NULL);
+     abts_run_test(suite, test_print_addr, NULL);
+     abts_run_test(suite, test_get_addr, NULL);
++    abts_run_test(suite, test_nonblock_inheritance, NULL);
+ 
+     return suite;
+ }

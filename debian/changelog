@@ -1,6 +1,8 @@
 apr (1.5.0-1) UNRELEASED; urgency=low
 
   * New upstream version
+  * Pull changes from upstream 1.5.x branch up to r1552863 to fix problems
+    on the FreeBSD 10 kernel with accept4() and non-blocking sockets.
 
  -- Stefan Fritsch <sf@debian.org>  Sat, 16 Nov 2013 18:31:00 +0100
 

@@ -2282,7 +2282,12 @@ APR_DECLARE(void) apr_pool_cleanup_kill(apr_pool_t *p, const void *data,
         }
 
         lastp = &c->next;
-        c = c->next;
+
+		if (c == c->next) {
+			c = NULL;
+		} else {
+			c = c->next;
+		}
     }
 
     /* Remove any pre-cleanup as well */

@@ -505,8 +505,9 @@ APR_DECLARE(int) apr_pool_is_ancestor(apr_pool_t *a, apr_pool_t *b);
  * Tag a pool (give it a name)
  * @param pool The pool to tag
  * @param tag  The tag
+ * @return the current tag, can be used as an accessor when passed NULL
  */
-APR_DECLARE(void) apr_pool_tag(apr_pool_t *pool, const char *tag)
+APR_DECLARE(const char *) apr_pool_tag(apr_pool_t *pool, const char *tag)
                   __attribute__((nonnull(1)));
 
 #if APR_HAS_THREADS

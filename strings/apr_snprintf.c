@@ -816,7 +816,11 @@ APR_DECLARE(int) apr_vformatter(int (*flush_func)(apr_vformatter_buff_t *),
              * the first if condition is never true. If APR_INT64_T_FMT
              * is "d' then the second if condition is never true.
              */
-            if ((sizeof(APR_OFF_T_FMT) > sizeof(APR_INT64_T_FMT)) &&
+            if (fmt[0] == 'l' && fmt[1] == 'l') {
+                /* long long is always at least 64 bits */
+                var_type = IS_QUAD;
+                fmt += 2;
+            } else if ((sizeof(APR_OFF_T_FMT) > sizeof(APR_INT64_T_FMT)) &&
                 ((sizeof(APR_OFF_T_FMT) == 4 &&
                  fmt[0] == APR_OFF_T_FMT[0] &&
                  fmt[1] == APR_OFF_T_FMT[1]) ||

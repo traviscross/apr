@@ -29,6 +29,7 @@
 #include "apu.h"
 #include "apr_errno.h"
 #include "apr_pools.h"
+#include "apr_time.h"
 
 #if APR_HAS_THREADS
 

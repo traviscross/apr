@@ -25,9 +25,11 @@
  * Although condition variables are sometimes available without threads.
  */
 
+#include "apr.h"
 #include "apu.h"
 #include "apr_errno.h"
 #include "apr_pools.h"
+#include "apr_time.h"
 
 #if APR_HAS_THREADS
 
@@ -77,6 +79,22 @@ APR_DECLARE(apr_status_t) apr_queue_push(apr_queue_t *queue, void *data);
  * @returns APR_SUCCESS on a successful pop
  */
 APR_DECLARE(apr_status_t) apr_queue_pop(apr_queue_t *queue, void **data);
+
+/**
+ * pop/get an object from the queue, blocking if the queue is already empty for up to N microseconds
+ *
+ * @param queue the queue
+ * @param data the data
+ * @param timeout The amount of time in microseconds to wait. This is
+ *        a maximum, not a minimum. If the condition is signaled, we
+ *        will wake up before this time, otherwise the error APR_TIMEUP
+ *        is returned.
+ * @returns APR_TIMEUP the request timed out
+ * @returns APR_EINTR the blocking was interrupted (try again)
+ * @returns APR_EOF if the queue has been terminated
+ * @returns APR_SUCCESS on a successfull pop
+ */
+APR_DECLARE(apr_status_t) apr_queue_pop_timeout(apr_queue_t *queue, void **data, apr_interval_time_t timeout);
 
 /**
  * push/add an object to the queue, returning immediately if the queue is full

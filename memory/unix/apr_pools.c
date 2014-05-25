@@ -554,6 +554,9 @@ struct apr_pool_t {
     apr_hash_t           *user_data;
     const char           *tag;
 
+#if APR_HAS_THREADS
+	apr_thread_mutex_t   *user_mutex;
+#endif
 #if !APR_POOL_DEBUG
     apr_memnode_t        *active;
     apr_memnode_t        *self; /* The node containing the pool itself */
@@ -739,6 +742,8 @@ static APR_INLINE void pool_concurrency_set_used(apr_pool_t *pool)
 {
     apr_uint32_t old;
 
+    if (pool->user_mutex)
+        apr_thread_mutex_lock(pool->user_mutex);
     old = apr_atomic_cas32(&pool->in_use, IN_USE, IDLE);
 
     if (old != IDLE)
@@ -752,6 +757,8 @@ static APR_INLINE void pool_concurrency_set_idle(apr_pool_t *pool)
     apr_uint32_t old;
 
     old = apr_atomic_cas32(&pool->in_use, IDLE, IN_USE);
+    if (pool->user_mutex)
+        apr_thread_mutex_unlock(pool->user_mutex);
 
     if (old != IN_USE)
         pool_concurrency_abort(pool, IDLE, old);
@@ -774,8 +781,14 @@ static APR_INLINE void pool_concurrency_set_destroyed(apr_pool_t *pool)
 }
 #else
 static APR_INLINE void pool_concurrency_init(apr_pool_t *pool)          { }
-static APR_INLINE void pool_concurrency_set_used(apr_pool_t *pool)      { }
-static APR_INLINE void pool_concurrency_set_idle(apr_pool_t *pool)      { }
+static APR_INLINE void pool_concurrency_set_used(apr_pool_t *pool) {
+  if (pool->user_mutex)
+      apr_thread_mutex_lock(pool->user_mutex);
+}
+static APR_INLINE void pool_concurrency_set_idle(apr_pool_t *pool) {
+  if (pool->user_mutex)
+      apr_thread_mutex_unlock(pool->user_mutex);
+}
 static APR_INLINE void pool_concurrency_set_destroyed(apr_pool_t *pool) { }
 #endif /* APR_POOL_CONCURRENCY_CHECK */
 
@@ -945,6 +958,14 @@ APR_DECLARE(void) apr_pool_clear(apr_pool_t *pool)
     pool_concurrency_set_idle(pool);
 }
 
+#if APR_HAS_THREADS
+APR_DECLARE(void) apr_pool_mutex_set(apr_pool_t *pool,
+                                     apr_thread_mutex_t *mutex)
+{
+    pool->user_mutex = mutex;
+}
+#endif
+
 APR_DECLARE(void) apr_pool_destroy(apr_pool_t *pool)
 {
     apr_memnode_t *active;
@@ -1083,6 +1104,9 @@ APR_DECLARE(apr_status_t) apr_pool_create_ex(apr_pool_t **newpool,
     pool->user_data = NULL;
     pool->tag = NULL;
 
+#if APR_HAS_THREADS
+    pool->user_mutex = NULL;
+#endif
 #ifdef NETWARE
     pool->owner_proc = (apr_os_proc_t)getnlmhandle();
 #endif /* defined(NETWARE) */

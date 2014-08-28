@@ -326,7 +326,7 @@ APR_DECLARE(apr_status_t) apr_queue_pop(apr_queue_t *queue, void **data)
  * until timeout is elapsed. Once retrieved, the item is placed into
  * the address specified by'data'.
  */
-APU_DECLARE(apr_status_t) apr_queue_pop_timeout(apr_queue_t *queue, void **data, apr_interval_time_t timeout)
+APR_DECLARE(apr_status_t) apr_queue_pop_timeout(apr_queue_t *queue, void **data, apr_interval_time_t timeout)
 {
     apr_status_t rv;
 

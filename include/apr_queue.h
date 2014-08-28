@@ -94,7 +94,7 @@ APR_DECLARE(apr_status_t) apr_queue_pop(apr_queue_t *queue, void **data);
  * @returns APR_EOF if the queue has been terminated
  * @returns APR_SUCCESS on a successfull pop
  */
-APU_DECLARE(apr_status_t) apr_queue_pop_timeout(apr_queue_t *queue, void **data, apr_interval_time_t timeout);
+APR_DECLARE(apr_status_t) apr_queue_pop_timeout(apr_queue_t *queue, void **data, apr_interval_time_t timeout);
 
 /**
  * push/add an object to the queue, returning immediately if the queue is full

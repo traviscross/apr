@@ -2572,7 +2572,7 @@ APR_DECLARE(void) apr_pool_cleanup_kill(apr_pool_t *p, const void *data,
         }
 
         lastp = &c->next;
-        (c->next != c) ? (c = c->next) : (c = NULL);
+        c = (c->next != c) ? c->next : NULL;
     }
 
     /* Remove any pre-cleanup as well */
@@ -2597,7 +2597,7 @@ APR_DECLARE(void) apr_pool_cleanup_kill(apr_pool_t *p, const void *data,
         }
 
         lastp = &c->next;
-        (c->next != c) ? (c = c->next) : (c = NULL);
+        c = (c->next != c) ? c->next : NULL;
     }
 
 }
